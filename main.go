@@ -21,6 +21,7 @@ func main() {
 		})
 	}
 
-	api.GET("/user", controllers.GetUserHandler(3))
+	api.GET("/user", controllers.GetUserByIdHandler(3))
+	api.GET("/users", controllers.GetAllUsersHandler)
 	router.Run(":8080")
 }

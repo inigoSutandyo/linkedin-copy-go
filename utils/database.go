@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+
+// Utility method to get database
 func GetDatabase() *gorm.DB {
 
 	dsn := fmt.Sprintf("host=localhost user=%s password=%s dbname=hotel port=%s sslmode=disable", GetEnv("DB_USER"), GetEnv("DB_PASSWORD"), GetEnv("DB_PORT"))
