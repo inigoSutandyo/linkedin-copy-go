@@ -32,9 +32,6 @@ func CORS(c *gin.Context) {
 }
 
 func LoginUserHandler(c *gin.Context) {
-	c.Header("Content-Type", "application/json")
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "*")
 
 	message := "success"
 	// CORS(c)
@@ -83,11 +80,7 @@ func LoginUserHandler(c *gin.Context) {
 
 func RegisterUserHandler(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
-	// c.Header("Access-Control-Allow-Origin", "*")
-	// // c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
-	// c.Header("Access-Control-Allow-Headers", "*")
-	// c.Header("Access-Control-Allow-Methods", "*")
-	// c.Header("Access-Control-Allow-Credentials", "true")
+
 	message := "success"
 
 	var data AuthData
