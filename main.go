@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/gin-gonic/contrib/static"
+	"github.com/gin-gonic/contrib/cors"
 	"github.com/gin-gonic/gin"
 	controllers "github.com/inigoSutandyo/linkedin-copy-go/controller"
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
@@ -11,9 +11,14 @@ import (
 
 func main() {
 	utils.Connect() // connect to DB
-	router := gin.Default()
-	router.Use(static.Serve("/", static.LocalFile("./views", true)))
 
+	router := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = false
+	config.AllowedOrigins = []string{"http://localhost:5173"}
+
+	router.Use(cors.New(config))
+	// router.Use(static.Serve("/", static.LocalFile("./views", true)))
 	api := router.Group("/api")
 	{
 		api.GET("/", func(context *gin.Context) {
@@ -25,6 +30,7 @@ func main() {
 
 	// api.GET("/user", controllers.GetUserByIdHandler(3))
 	api.POST("/register", controllers.RegisterUserHandler)
+	api.POST("/login", controllers.LoginUserHandler)
 	api.GET("/users", controllers.GetAllUsersHandler)
 	router.Run(":8080")
 }
