@@ -18,25 +18,19 @@ type AuthData struct {
 	Password string `json:"password"`
 }
 
-func CORS(c *gin.Context) {
-	c.Header("Content-Type", "application/json")
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Headers", "*")
-	c.Header("Access-Control-Allow-Methods", "*")
-	c.Header("Access-Control-Allow-Credentials", "true")
-	if c.Request.Method == http.MethodOptions {
-		c.AbortWithStatus(http.StatusNoContent)
-		return
-	}
-	c.Next()
-}
-
 func LoginUserHandler(c *gin.Context) {
+	// c.Header("Access-Control-Allow-Origin", "*")
+	// c.Header("Access-Control-Allow-Headers", "Content-Type")
+	// c.Header("Content-Type", "application/json")
+	// c.Header("Access-Control-Allow-Credentials", "true")
 
 	message := "success"
-	// CORS(c)
-	email := c.PostForm("email")
-	password := c.PostForm("password")
+
+	var data AuthData
+	c.BindJSON(&data)
+	email := data.Email
+	password := data.Password
+
 	var user models.User
 	user = models.GetUserByEmail(email)
 	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
@@ -68,10 +62,9 @@ func LoginUserHandler(c *gin.Context) {
 			"isError": true,
 		})
 	} else {
-		c.SetCookie("token", token, 3600*6, "/", "127.0.0.1:8080", false, true)
+		c.SetCookie("token", token, 3600*6, "/", "http://localhost", false, true)
 		c.JSON(http.StatusOK, gin.H{
 			"message": message,
-			"user":    user,
 			"isError": false,
 		})
 	}
