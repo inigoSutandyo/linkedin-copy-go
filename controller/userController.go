@@ -2,23 +2,28 @@ package controller
 
 import (
 	"fmt"
+	"math/big"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	models "github.com/inigoSutandyo/linkedin-copy-go/model"
 )
 
-func GetUserByIdHandler(id uint) gin.HandlerFunc {
-	fn := func(c *gin.Context) {
-		user := models.GetUserById(3)
-		c.Header("Content-Type", "application/json")
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Some handler for my beautiful api",
-			"user":    user,
-		})
+func GetUserByIdHandler(c *gin.Context) {
+	id := new(big.Int)
+	_, err := fmt.Sscan(c.Param("id"), id)
+	if err != nil {
+		fmt.Println("error scanning value:", err)
+	} else {
+		fmt.Println(id)
 	}
 
-	return gin.HandlerFunc(fn)
+	user := models.GetUserById(*id)
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Some handler for my beautiful api",
+		"user":    user,
+	})
 }
 
 func GetAllUsersHandler(c *gin.Context) {

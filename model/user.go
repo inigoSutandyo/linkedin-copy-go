@@ -2,6 +2,8 @@ package model
 
 import (
 	"fmt"
+	"math/big"
+	"time"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
 	"golang.org/x/crypto/bcrypt"
@@ -9,15 +11,16 @@ import (
 
 type User struct {
 	// tableName struct{} `pg:"users"`
-	Id       uint
-	Email    string
-	Password []byte
-	Name     string
-	Phone    string
-	Dob      string
+	Id        uint
+	Email     string
+	Password  []byte
+	FirstName string
+	LastName  string
+	Phone     string
+	Dob       time.Time
 }
 
-func GetUserById(id uint) User {
+func GetUserById(id big.Int) User {
 
 	var user User
 	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
