@@ -4,37 +4,57 @@ import (
 	"fmt"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
 	// tableName struct{} `pg:"users"`
-	Id    uint
-	Email string
-	Name  string
-	Phone string
-	Dob   string
+	Id       uint
+	Email    string
+	Password []byte
+	Name     string
+	Phone    string
+	Dob      string
 }
 
 func GetUserById(id uint) User {
-	db := utils.GetDatabase()
+
 	var user User
-	db.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
+	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
 	fmt.Println(user)
 	return user
 }
 
 func GetUserByEmail(email string) User {
-	db := utils.GetDatabase()
+
 	var user User
-	db.Raw("SELECT id, email, password FROM users WHERE email = ?", email).Scan(&user)
+	utils.DB.Raw("SELECT id, email, password FROM users WHERE email = ?", email).Scan(&user)
 	fmt.Println(user)
 	return user
 }
 
 func GetAllUsers() []User {
-	db := utils.GetDatabase()
+
 	var users []User
-	db.Find(&users)
+	utils.DB.Find(&users)
 	fmt.Println(users)
 	return users
+}
+
+func GetUserByEmailAndPassword(email string, password string) User {
+
+	var user User
+	utils.DB.First(&user, "email = ? AND password = ?", email, password)
+	return user
+}
+
+func CreateUser(email string, password string) (User, error) {
+
+	pw, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	user := User{
+		Email:    email,
+		Password: pw,
+	}
+	err := utils.DB.Create(&user).Error
+	return user, err
 }

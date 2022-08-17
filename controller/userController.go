@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,5 +27,25 @@ func GetAllUsersHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success",
 		"users":   users,
+	})
+}
+
+func RegisterUserHandler(c *gin.Context) {
+	message := "Succesfull"
+
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+
+	fmt.Println(email)
+
+	user, err := models.CreateUser(email, password)
+	c.Header("Content-Type", "application/json")
+	if err != nil {
+		message = err.Error()
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": message,
+		"user":    user,
 	})
 }
