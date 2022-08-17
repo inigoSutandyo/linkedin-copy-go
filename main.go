@@ -31,6 +31,8 @@ func main() {
 	// api.GET("/user", controllers.GetUserByIdHandler(3))
 	api.POST("/register", controllers.RegisterUserHandler)
 	api.POST("/login", controllers.LoginUserHandler)
+	api.POST("/logout", controllers.LogoutHandler)
+	api.GET("/auth", controllers.GetAuth)
 	api.GET("/users", controllers.GetAllUsersHandler)
 	router.Run(":8080")
 }

@@ -6,14 +6,13 @@ import (
 	"time"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
 	// tableName struct{} `pg:"users"`
-	Id        uint
-	Email     string
-	Password  []byte
+	Id        uint   `json:"id"`
+	Email     string `json:"email" gorm:"unique"`
+	Password  []byte `json:"-"`
 	FirstName string
 	LastName  string
 	Phone     string
@@ -21,7 +20,6 @@ type User struct {
 }
 
 func GetUserById(id big.Int) User {
-
 	var user User
 	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
 	fmt.Println(user)
@@ -51,12 +49,10 @@ func GetUserByEmailAndPassword(email string, password string) User {
 	return user
 }
 
-func CreateUser(email string, password string) (User, error) {
-
-	pw, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+func CreateUser(email string, password []byte) (User, error) {
 	user := User{
 		Email:    email,
-		Password: pw,
+		Password: password,
 	}
 	err := utils.DB.Create(&user).Error
 	return user, err
