@@ -13,9 +13,31 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func LoginUserHandler(c *gin.Context) {
-	message := "Sucessful"
+type AuthData struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
+func CORS(c *gin.Context) {
+	c.Header("Content-Type", "application/json")
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Headers", "*")
+	c.Header("Access-Control-Allow-Methods", "*")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	if c.Request.Method == http.MethodOptions {
+		c.AbortWithStatus(http.StatusNoContent)
+		return
+	}
+	c.Next()
+}
+
+func LoginUserHandler(c *gin.Context) {
+	c.Header("Content-Type", "application/json")
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "*")
+
+	message := "success"
+	// CORS(c)
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 	var user models.User
@@ -60,27 +82,50 @@ func LoginUserHandler(c *gin.Context) {
 }
 
 func RegisterUserHandler(c *gin.Context) {
-	message := "Sucesful"
-
-	email := c.PostForm("email")
-	password := c.PostForm("password")
-
-	fmt.Println(email)
-	pw, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
-	user, err := models.CreateUser(email, pw)
 	c.Header("Content-Type", "application/json")
+	// c.Header("Access-Control-Allow-Origin", "*")
+	// // c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
+	// c.Header("Access-Control-Allow-Headers", "*")
+	// c.Header("Access-Control-Allow-Methods", "*")
+	// c.Header("Access-Control-Allow-Credentials", "true")
+	message := "success"
+
+	var data AuthData
+	bindErr := c.BindJSON(&data)
+	email := data.Email
+	password := data.Password
+
+	if email == "" || password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Error!",
+		})
+		return
+	}
+
+	if bindErr != nil {
+		message = bindErr.Error()
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": message,
+		})
+		return
+	}
+
+	pw, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	_, err := models.CreateUser(email, pw)
+
 	if err != nil {
 		message = err.Error()
 	}
+	fmt.Println(data)
+	fmt.Println(message)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": message,
-		"user":    user,
 	})
 }
 
 func GetAuth(c *gin.Context) {
-	message := "Sucessful"
+	message := "success"
 	cookie, err := c.Cookie("token")
 
 	token, tokenErr := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -118,7 +163,7 @@ func GetAuth(c *gin.Context) {
 }
 
 func LogoutHandler(c *gin.Context) {
-	message := "Sucessful"
+	message := "success"
 	c.SetCookie("token", "deleting", -1, "/", "127.0.0.1:8080", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"message": message,
