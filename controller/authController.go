@@ -18,7 +18,7 @@ type AuthData struct {
 	Password string `json:"password"`
 }
 
-func LoginUserHandler(c *gin.Context) {
+func Login(c *gin.Context) {
 	// c.Header("Access-Control-Allow-Origin", "*")
 	// c.Header("Access-Control-Allow-Headers", "Content-Type")
 	// c.Header("Content-Type", "application/json")
@@ -72,7 +72,7 @@ func LoginUserHandler(c *gin.Context) {
 
 }
 
-func RegisterUserHandler(c *gin.Context) {
+func Register(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
 
 	message := "success"
@@ -111,11 +111,32 @@ func RegisterUserHandler(c *gin.Context) {
 	})
 }
 
-func LogoutHandler(c *gin.Context) {
+func Logout(c *gin.Context) {
 	message := "success"
 	c.SetCookie("token", "deleting", -1, "/", "http://localhost", false, true)
 	c.SetCookie("token", "deleting", -1, "/", "http://127.0.0.1", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"message": message,
 	})
+}
+
+func CheckAuth(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"isAuth": false,
+		})
+		return
+	}
+
+	_, tokenErr := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(utils.GetEnv("SECRET_KEY")), nil
+	})
+
+	if tokenErr != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"isAuth": false,
+		})
+	}
 }
