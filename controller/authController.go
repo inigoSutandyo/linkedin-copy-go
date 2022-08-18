@@ -120,23 +120,36 @@ func Logout(c *gin.Context) {
 	})
 }
 
-func CheckAuth(c *gin.Context) {
+func CheckAuth(c *gin.Context) (bool, *jwt.Token, error) {
 	cookie, err := c.Cookie("token")
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"isAuth": false,
-		})
-		return
+		return false, nil, err
 	}
 
-	_, tokenErr := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, tokenErr := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(utils.GetEnv("SECRET_KEY")), nil
 	})
 
 	if tokenErr != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"isAuth": false,
+		return false, nil, tokenErr
+	}
+	return true, token, nil
+}
+
+func ClientAuth(c *gin.Context) {
+	status, _, err := CheckAuth(c)
+
+	if status {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  status,
+			"message": "Client is authorized",
+		})
+	} else {
+		c.Error(err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"status":  status,
+			"message": "Client is unaouthorized",
 		})
 	}
 }

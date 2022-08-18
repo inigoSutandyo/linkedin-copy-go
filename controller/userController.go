@@ -11,32 +11,18 @@ import (
 )
 
 func GetUser(c *gin.Context) {
+
+	status, token, err := CheckAuth(c)
+
+	if status == false {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"status":  status,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	message := "success"
-	cookie, err := c.Cookie("token")
-	if err != nil {
-		message = "Not Allowed"
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": message,
-			"error":   err.Error(),
-			"isError": true,
-		})
-		return
-	}
-
-	token, tokenErr := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(utils.GetEnv("SECRET_KEY")), nil
-	})
-
-	if tokenErr != nil {
-		message = "Could not get user"
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": message,
-			"error":   tokenErr.Error(),
-			"isError": true,
-		})
-		return
-	}
-
 	claims := token.Claims.(*jwt.StandardClaims)
 
 	var user models.User

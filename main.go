@@ -45,7 +45,7 @@ func main() {
 	api := router.Group("/api")
 	{
 
-		api.GET("/auth/isauth", controllers.CheckAuth)
+		api.GET("/auth/isauth", controllers.ClientAuth)
 		api.POST("/auth/register", controllers.Register)
 		api.POST("/auth/login", controllers.Login)
 		api.POST("/auth/logout", controllers.Logout)
