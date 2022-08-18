@@ -36,7 +36,7 @@ func LoginUserHandler(c *gin.Context) {
 	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
 
 	if err != nil {
-		c.Status(404)
+
 		message = "User not found"
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": message,
@@ -63,6 +63,7 @@ func LoginUserHandler(c *gin.Context) {
 		})
 	} else {
 		c.SetCookie("token", token, 3600*6, "/", "http://localhost", false, true)
+		c.SetCookie("token", token, 3600*6, "/", "http://127.0.0.1", false, true)
 		c.JSON(http.StatusOK, gin.H{
 			"message": message,
 			"isError": false,
@@ -118,7 +119,7 @@ func GetAuth(c *gin.Context) {
 		return []byte(utils.GetEnv("SECRET_KEY")), nil
 	})
 	if err != nil {
-		message = "Unauthorized"
+		message = "Not Allowed"
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": message,
 			"error":   err.Error(),
@@ -150,7 +151,8 @@ func GetAuth(c *gin.Context) {
 
 func LogoutHandler(c *gin.Context) {
 	message := "success"
-	c.SetCookie("token", "deleting", -1, "/", "127.0.0.1:8080", false, true)
+	c.SetCookie("token", "deleting", -1, "/", "http://localhost", false, true)
+	c.SetCookie("token", "deleting", -1, "/", "http://127.0.0.1", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"message": message,
 	})

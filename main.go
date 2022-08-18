@@ -16,10 +16,13 @@ func CORS(c *gin.Context) {
 	// c.Header("Access-Control-Allow-Headers", "*")
 	// c.Header("Access-Control-Allow-Credentials", "true")
 	// c.Header("Content-Type", "application/json")
-
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+	origin := c.Request.Header.Get("Origin")
+	fmt.Println("host = " + origin)
+	if origin == "http://127.0.0.1:5173" || origin == "http://localhost:5173" {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+	}
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With, x-xsrf-token")
 	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
 
 	if c.Request.Method != "OPTIONS" {
