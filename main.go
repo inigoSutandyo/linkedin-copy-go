@@ -45,11 +45,10 @@ func main() {
 	api := router.Group("/api")
 	{
 
-		api.POST("/register", controllers.RegisterUserHandler)
-		api.POST("/login", controllers.LoginUserHandler)
-		api.POST("/logout", controllers.LogoutHandler)
-		api.GET("/auth", controllers.GetAuth)
-		api.GET("/users", controllers.GetAllUsersHandler)
+		api.POST("/auth/register", controllers.RegisterUserHandler)
+		api.POST("/auth/login", controllers.LoginUserHandler)
+		api.POST("/auth/logout", controllers.LogoutHandler)
+		api.GET("/user/profile", controllers.GetUser)
 	}
 
 	router.Run(":8080")
