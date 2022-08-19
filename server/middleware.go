@@ -9,7 +9,7 @@ import (
 
 func CORS(c *gin.Context) {
 	origin := c.Request.Header.Get("Origin")
-	fmt.Println("host = " + origin)
+	// fmt.Println("host = " + origin)
 	if origin == "http://127.0.0.1:5173" || origin == "http://localhost:5173" {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 	}

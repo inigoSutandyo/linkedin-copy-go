@@ -6,26 +6,25 @@ import (
 	"time"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
-	"gorm.io/gorm"
 )
 
 type User struct {
 	// tableName struct{} `pg:"users"`
-	gorm.Model
-	Id            uint   `json:"id" gorm:"primarykey"`
-	Email         string `json:"email" gorm:"unique"`
-	Password      []byte `json:"-"`
-	FirstName     string `json:"firstname" gorm:""`
-	LastName      string `json:"lastname" gorm:"unique"`
-	Phone         string `json:"phone" gorm:"unique"`
-	Dob           time.Time
-	Posts         []Post
-	LikedPosts    []*Post `gorm:"many2many:user_likedposts"`
-	Comments      []Comment
-	LikedComments []*Comment `gorm:"many2many:user_likedcomments"`
-	Replies       []Reply
-	SharedFrom    []*Share `gorm:"many2many:user_sharedfrom"`
-	SharedTo      []*Share `gorm:"many2many:user_sharedto"`
+	// gorm.Model
+	Id        uint   `json:"id" gorm:"primarykey"`
+	Email     string `json:"email" gorm:"unique"`
+	Password  []byte `json:"-"`
+	FirstName string `json:"firstname" gorm:""`
+	LastName  string `json:"lastname" gorm:"unique"`
+	Phone     string `json:"phone" gorm:"unique"`
+	Dob       time.Time
+	// Posts         []Post
+	// LikedPosts    []*Post `gorm:"many2many:user_likedposts"`
+	// Comments      []Comment
+	// LikedComments []*Comment `gorm:"many2many:user_likedcomments"`
+	// Replies       []Reply
+	// SharedFrom    []*Share `gorm:"many2many:user_sharedfrom"`
+	// SharedTo      []*Share `gorm:"many2many:user_sharedto"`
 }
 
 func GetUserById(id big.Int) User {

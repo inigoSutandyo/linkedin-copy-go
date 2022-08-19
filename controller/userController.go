@@ -26,9 +26,11 @@ func GetUser(c *gin.Context) {
 	claims := token.Claims.(*jwt.StandardClaims)
 
 	var user models.User
-	fmt.Println(claims.Issuer)
-	utils.DB.Where("id = ?", claims.Issuer).First(&user)
-
+	fmt.Println("ID = " + claims.Issuer)
+	// utils.DB.Where("id = ?", claims.Issuer).First(&user)
+	utils.DB.First(&user, "id = ?", claims.Issuer)
+	fmt.Print("USER = ")
+	fmt.Println(user)
 	c.JSON(http.StatusOK, gin.H{
 		"user":    user,
 		"message": message,

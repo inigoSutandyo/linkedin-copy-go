@@ -62,8 +62,12 @@ func Login(c *gin.Context) {
 			"isError": true,
 		})
 	} else {
-		c.SetCookie("token", token, 3600*6, "/", "http://localhost", false, true)
-		c.SetCookie("token", token, 3600*6, "/", "http://127.0.0.1", false, true)
+		c.SetCookie("token", token, 3600*12, "/", "http://127.0.0.1", true, true)
+		c.SetCookie("auth", "true", 3600*12, "/", "http://127.0.0.1", false, false)
+
+		c.SetCookie("token", token, 3600*12, "/", "http://localhost", true, true)
+		c.SetCookie("auth", "true", 3600*12, "/", "http://localhost", false, false)
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": message,
 			"isError": false,
@@ -113,8 +117,13 @@ func Register(c *gin.Context) {
 
 func Logout(c *gin.Context) {
 	message := "success"
+	// c.Cookie("token")
 	c.SetCookie("token", "deleting", -1, "/", "http://localhost", false, true)
 	c.SetCookie("token", "deleting", -1, "/", "http://127.0.0.1", false, true)
+
+	c.SetCookie("auth", "deleting", -1, "/", "http://localhost", false, true)
+	c.SetCookie("auth", "deleting", -1, "/", "http://127.0.0.1", false, true)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": message,
 	})
