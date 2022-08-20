@@ -18,8 +18,8 @@ type User struct {
 	LastName  string `json:"lastname"`
 	Phone     string `json:"phone" gorm:"unique"`
 	Dob       time.Time
-	// Posts         []Post
-	// LikedPosts    []*Post `gorm:"many2many:user_likedposts"`
+	Posts     []Post
+	// PostDetails []PostDetail
 	// Comments      []Comment
 	// LikedComments []*Comment `gorm:"many2many:user_likedcomments"`
 	// Replies       []Reply
