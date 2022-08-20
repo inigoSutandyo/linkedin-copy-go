@@ -10,9 +10,7 @@ import (
 	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 )
 
-func GetUser(c *gin.Context) {
-
-	var user models.User
+func getUserID(c *gin.Context) string {
 	status, token, err := CheckAuth(c)
 	if status == false {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -22,12 +20,19 @@ func GetUser(c *gin.Context) {
 	}
 
 	claims := token.Claims.(*jwt.StandardClaims)
+	c.Next()
+	return claims.Issuer
 
-	fmt.Println("ID = " + claims.Issuer)
-	utils.DB.First(&user, "id = ?", claims.Issuer)
-	fmt.Print("USER = ")
-	fmt.Println(user)
+}
 
+func GetUser(c *gin.Context) {
+
+	var user models.User
+	var id string
+	id = getUserID(c)
+
+	fmt.Println("ID = " + id)
+	utils.DB.First(&user, "id = ?", id)
 	message := "success"
 
 	c.JSON(http.StatusOK, gin.H{
@@ -40,16 +45,8 @@ func GetUser(c *gin.Context) {
 func UpdateProfile(c *gin.Context) {
 	var user models.User
 
-	status, token, _ := CheckAuth(c)
-
-	if status == false {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"status":  status,
-			"message": "Error Unauthorized",
-		})
-	}
-	claims := token.Claims.(*jwt.StandardClaims)
-	utils.DB.First(&user, "id = ?", claims.Issuer)
+	id := getUserID(c)
+	utils.DB.First(&user, "id = ?", id)
 
 	var updateUser models.User
 	bindErr := c.BindJSON(&updateUser)
@@ -62,18 +59,11 @@ func UpdateProfile(c *gin.Context) {
 		})
 	}
 
-	if updateUser.ID != user.ID {
-		// c.Error(bindErr)
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "User not found",
-		})
-	}
 	utils.DB.Model(&user).Omit("id, password").Updates(updateUser)
 	fmt.Print("USER = ")
 	fmt.Println(user.ID)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
-		"user": user,
+		"user":    user,
 	})
 }

@@ -9,6 +9,7 @@ type Post struct {
 	Title      string `json:"title"`
 	Content    []byte
 	Attachment string
+	Likes      int
 	Template   Template `gorm:"embedded"`
 	UserID     uint
 	// PostLikes  []PostLike
