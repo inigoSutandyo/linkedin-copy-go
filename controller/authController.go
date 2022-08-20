@@ -19,11 +19,6 @@ type AuthData struct {
 }
 
 func Login(c *gin.Context) {
-	// c.Header("Access-Control-Allow-Origin", "*")
-	// c.Header("Access-Control-Allow-Headers", "Content-Type")
-	// c.Header("Content-Type", "application/json")
-	// c.Header("Access-Control-Allow-Credentials", "true")
-
 	message := "success"
 
 	var data AuthData

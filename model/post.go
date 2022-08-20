@@ -7,9 +7,9 @@ import (
 type Post struct {
 	gorm.Model
 	Title      string `json:"title"`
-	Content    string
+	Content    []byte
 	Attachment string
-	// PostDetails []PostDetail
-	Template Template `gorm:"embedded"`
-	UserID   uint
+	Template   Template `gorm:"embedded"`
+	UserID     uint
+	// PostLikes  []PostLike
 }

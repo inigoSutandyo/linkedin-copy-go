@@ -2,8 +2,8 @@ package model
 
 import "gorm.io/gorm"
 
-type PostDetail struct {
+type PostLike struct {
 	gorm.Model
-	UserID uint 
+	UserID uint
 	PostID uint
 }
