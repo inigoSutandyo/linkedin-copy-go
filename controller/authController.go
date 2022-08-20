@@ -48,7 +48,7 @@ func Login(c *gin.Context) {
 
 	c.Header("Content-Type", "application/json")
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer:    strconv.Itoa(int(user.Id)),
+		Issuer:    strconv.Itoa(int(user.ID)),
 		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 	})
 

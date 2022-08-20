@@ -62,7 +62,7 @@ func UpdateProfile(c *gin.Context) {
 		})
 	}
 
-	if updateUser.Id != user.Id {
+	if updateUser.ID != user.ID {
 		// c.Error(bindErr)
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -71,8 +71,9 @@ func UpdateProfile(c *gin.Context) {
 	}
 	utils.DB.Model(&user).Omit("id, password").Updates(updateUser)
 	fmt.Print("USER = ")
-	fmt.Println(user)
+	fmt.Println(user.ID)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
+		"user": user,
 	})
 }

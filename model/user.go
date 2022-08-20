@@ -12,7 +12,6 @@ import (
 type User struct {
 	// tableName struct{} `pg:"users"`
 	gorm.Model
-	Id        uint   `json:"id"`
 	Email     string `json:"email" gorm:"unique"`
 	Password  []byte `json:"-"`
 	FirstName string `json:"firstname"`
