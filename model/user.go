@@ -14,8 +14,8 @@ type User struct {
 	Id        uint   `json:"id" gorm:"primarykey"`
 	Email     string `json:"email" gorm:"unique"`
 	Password  []byte `json:"-"`
-	FirstName string `json:"firstname" gorm:""`
-	LastName  string `json:"lastname" gorm:"unique"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
 	Phone     string `json:"phone" gorm:"unique"`
 	Dob       time.Time
 	// Posts         []Post
