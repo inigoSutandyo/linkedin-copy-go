@@ -1,13 +1,16 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Comment struct {
 	gorm.Model
-	Id        uint
-	Content   string
-	Likes     []User
-	Replies   []Reply
-	UserID    uint
-	LikeUsers []*User `gorm:"many2many:user_likedcomments"`
+	Id        uint     `json:"id"`
+	Content   string   `json:"content"`
+	Likes     []User   `json:"likes"`
+	Replies   []Reply  `json:"replies"`
+	UserID    uint     `json:"userid"`
+	LikeUsers []*User  `json:"likeusers" gorm:"many2many:user_likedcomments"`
+	Template  Template `gorm:"embedded"`
 }

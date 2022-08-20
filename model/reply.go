@@ -1,6 +1,8 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Reply struct {
 	gorm.Model
@@ -8,4 +10,5 @@ type Reply struct {
 	Content   string
 	UserID    uint
 	CommentID uint
+	Template  Template `gorm:"embedded"`
 }
