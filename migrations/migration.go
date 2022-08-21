@@ -7,6 +7,6 @@ import (
 
 func Migrate() {
 	// utils.DB.Migrator().CreateConstraint(&models.User{}, "Posts")
-
+	// utils.DB.Migrator().DropTable(&models.Post{}, &models.User{})
 	utils.DB.AutoMigrate(&models.User{}, &models.Post{})
 }

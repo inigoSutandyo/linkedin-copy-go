@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"math/big"
 	"time"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
@@ -18,17 +17,16 @@ type User struct {
 	LastName  string `json:"lastname"`
 	Phone     string `json:"phone" gorm:"unique"`
 	Dob       time.Time
-	Posts     []Post
+	Posts     []Post `json:"-"`
 	// PostLikes []PostLike
 	// Comments      []Comment
 	// LikedComments []*Comment `gorm:"many2many:user_likedcomments"`
 	// Replies       []Reply
 	// SharedFrom    []*Share `gorm:"many2many:user_sharedfrom"`
 	// SharedTo      []*Share `gorm:"many2many:user_sharedto"`
-	Template Template `gorm:"embedded"`
 }
 
-func GetUserById(id big.Int) User {
+func GetUserById(id string) User {
 	var user User
 	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
 	fmt.Println(user)
@@ -43,21 +41,6 @@ func GetUserByEmail(email string) User {
 	return user
 }
 
-func GetAllUsers() []User {
-
-	var users []User
-	utils.DB.Find(&users)
-	fmt.Println(users)
-	return users
-}
-
-func GetUserByEmailAndPassword(email string, password string) User {
-
-	var user User
-	utils.DB.First(&user, "email = ? AND password = ?", email, password)
-	return user
-}
-
 func CreateUser(email string, password []byte) (User, error) {
 	user := User{
 		Email:    email,
@@ -65,4 +48,14 @@ func CreateUser(email string, password []byte) (User, error) {
 	}
 	err := utils.DB.Create(&user).Error
 	return user, err
+}
+
+func UpdateUser(user *User, omit string, update User) {
+	utils.DB.Model(&user).Omit(omit).Updates(update)
+}
+
+func GetUserPost(user *User) Post {
+	var post Post
+	utils.DB.Model(user).Association("Posts").Find(&post)
+	return post
 }

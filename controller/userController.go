@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	models "github.com/inigoSutandyo/linkedin-copy-go/model"
-	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 )
 
 func getUserID(c *gin.Context) string {
@@ -32,11 +31,12 @@ func GetUser(c *gin.Context) {
 	id = getUserID(c)
 
 	fmt.Println("ID = " + id)
-	utils.DB.First(&user, "id = ?", id)
+	user = models.GetUserById(id)
 	message := "success"
-
+	post := models.GetUserPost(&user)
 	c.JSON(http.StatusOK, gin.H{
 		"user":    user,
+		"posts":   post,
 		"message": message,
 	})
 
@@ -46,7 +46,7 @@ func UpdateProfile(c *gin.Context) {
 	var user models.User
 
 	id := getUserID(c)
-	utils.DB.First(&user, "id = ?", id)
+	user = models.GetUserById(id)
 
 	var updateUser models.User
 	bindErr := c.BindJSON(&updateUser)
@@ -59,9 +59,10 @@ func UpdateProfile(c *gin.Context) {
 		})
 	}
 
-	utils.DB.Model(&user).Omit("id, password").Updates(updateUser)
+	models.UpdateUser(&user, "password, email, id", updateUser)
 	fmt.Print("USER = ")
 	fmt.Println(user.ID)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
 		"user":    user,
