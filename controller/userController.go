@@ -33,10 +33,10 @@ func GetUser(c *gin.Context) {
 	fmt.Println("ID = " + id)
 	user = models.GetUserById(id)
 	message := "success"
-	post := models.GetUserPost(&user)
+	posts := models.GetUserPost(&user)
 	c.JSON(http.StatusOK, gin.H{
 		"user":    user,
-		"posts":   post,
+		"posts":   posts,
 		"message": message,
 	})
 

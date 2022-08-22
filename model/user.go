@@ -54,8 +54,8 @@ func UpdateUser(user *User, omit string, update User) {
 	utils.DB.Model(&user).Omit(omit).Updates(update)
 }
 
-func GetUserPost(user *User) Post {
-	var post Post
+func GetUserPost(user *User) []Post {
+	var post []Post
 	utils.DB.Model(user).Association("Posts").Find(&post)
 	return post
 }

@@ -9,7 +9,7 @@ import (
 
 type Post struct {
 	gorm.Model
-	Title      string `json:"title"`
+	Title      string `json:"-"`
 	Content    string `json:"content" gorm:"text"`
 	Attachment string `json:"attachment"`
 	Likes      int    `json:"like"`
