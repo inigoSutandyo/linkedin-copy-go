@@ -18,5 +18,6 @@ func Routes(router *gin.Engine) {
 		api.POST("/user/profile/update", controllers.UpdateProfile)
 
 		api.POST("/home/post/add", controllers.AddPost)
+		api.GET("/home/post", controllers.GetPosts)
 	}
 }

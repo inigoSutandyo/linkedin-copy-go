@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
-	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 
 	// "github.com/fmpwizard/go-quilljs-delta/delta"
 	"github.com/microcosm-cc/bluemonday"
@@ -41,9 +40,10 @@ func AddPost(c *gin.Context) {
 	})
 }
 
-func GetPost(c *gin.Context) {
+func GetPosts(c *gin.Context) {
 	var posts []model.Post
-	err := utils.DB.Find(&posts).Error
+	var users []model.User
+	err := model.GetAllPost(&posts, &users)
 
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -54,5 +54,6 @@ func GetPost(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"posts": posts,
+		// "users": users,
 	})
 }
