@@ -23,7 +23,7 @@ func CreateComment(user *User, post *Post, comment *Comment) error {
 	return err
 }
 
-func GetCommentByPost(post *Post, comments *[]Comment) error {
-	err := utils.DB.Preload("Post").Find(comments).Error
+func GetCommentByPost(id string, comments *[]Comment) error {
+	err := utils.DB.Where("post_id = ?", id).Find(comments).Error
 	return err
 }

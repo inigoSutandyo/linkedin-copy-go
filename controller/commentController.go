@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
@@ -47,24 +46,16 @@ func AddComment(c *gin.Context) {
 
 func GetComments(c *gin.Context) {
 	str_id, _ := c.GetQuery("id")
-	id64, _ := strconv.ParseUint(str_id, 10, 32)
-	id := uint(id64)
+	// id64, _ := strconv.ParseUint(str_id, 10, 32)
+	// id := uint(id64)
 
-	post, err := model.GetPostByID(id)
+	var comments []model.Comment
+	err := model.GetCommentByPost(str_id, &comments)
+
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"status":  false,
 			"message": err.Error(),
-		})
-	}
-
-	var comments []model.Comment
-	dbErr := model.GetCommentByPost(&post, &comments)
-
-	if dbErr != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"status":  false,
-			"message": dbErr.Error(),
 		})
 	}
 
