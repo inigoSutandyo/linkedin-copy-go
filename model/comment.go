@@ -24,6 +24,7 @@ func CreateComment(user *User, post *Post, comment *Comment) error {
 }
 
 func GetCommentByPost(id string, comments *[]Comment) error {
-	err := utils.DB.Where("post_id = ?", id).Find(comments).Error
+	// err := utils.DB.Where("post_id = ?", id).Find(comments).Error
+	err := utils.DB.Joins("User").Joins("Post").Find(comments, "comments.post_id = ?", id).Error
 	return err
 }
