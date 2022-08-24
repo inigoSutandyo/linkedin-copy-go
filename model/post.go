@@ -12,9 +12,9 @@ type Post struct {
 	Title      string `json:"-"`
 	Content    string `json:"content" gorm:"text"`
 	Attachment string `json:"attachment"`
-	Likes      int    `json:"like"`
-	UserID     uint
-	User       User
+	Likes      int    `json:"likes"`
+	UserID     uint   `json:"-"`
+	User       User   `json:"user"`
 	// Template   Template `gorm:"embedded"`s
 	// PostLikes  []PostLike
 }
@@ -29,10 +29,5 @@ func CreatePost(user *User, post *Post) error {
 func GetAllPost(posts *[]Post, users *[]User) error {
 	// err := utils.DB.Find(posts).Error
 	err := utils.DB.Preload("User").Find(posts).Error
-	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		fmt.Println(posts)
-	}
 	return err
 }

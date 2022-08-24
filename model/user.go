@@ -13,6 +13,7 @@ type User struct {
 	gorm.Model
 	Email     string `json:"email" gorm:"unique"`
 	Password  []byte `json:"-"`
+	Headline  string `json:"headline"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Phone     string `json:"phone" gorm:"unique"`

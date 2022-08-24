@@ -6,9 +6,9 @@ import (
 
 type Reply struct {
 	gorm.Model
-	Id        uint
 	Content   string
 	UserID    uint
+	User      User
 	CommentID uint
-	Template  Template `gorm:"embedded"`
+	Comment   Comment
 }
