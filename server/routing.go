@@ -19,5 +19,8 @@ func Routes(router *gin.Engine) {
 
 		api.POST("/home/post/add", controllers.AddPost)
 		api.GET("/home/post", controllers.GetPosts)
+
+		api.GET("/home/post/comment", controllers.GetComments)
+		api.POST("/home/post/comment/add", controllers.AddComment)
 	}
 }

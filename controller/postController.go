@@ -15,7 +15,7 @@ func AddPost(c *gin.Context) {
 	id := getUserID(c)
 	var post model.Post
 	c.BindJSON(&post)
-	fmt.Print("Post = ")
+
 	p := bluemonday.UGCPolicy()
 
 	html := p.Sanitize(post.Content)
