@@ -36,7 +36,7 @@ func CreatePost(user *User, post *Post) error {
 
 func GetAllPost(posts *[]Post, users *[]User) error {
 	// err := utils.DB.Find(posts).Error
-	err := utils.DB.Preload("User").Find(posts).Error
+	err := utils.DB.Preload("User").Order("posts.created_at desc").Find(posts).Error
 
 	for _, post := range *posts {
 		getPostLikeCount(&post)
