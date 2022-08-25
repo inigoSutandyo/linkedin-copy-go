@@ -6,9 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
-
 	// "github.com/fmpwizard/go-quilljs-delta/delta"
-	"github.com/microcosm-cc/bluemonday"
 )
 
 func AddPost(c *gin.Context) {
@@ -16,10 +14,7 @@ func AddPost(c *gin.Context) {
 	var post model.Post
 	c.BindJSON(&post)
 
-	p := bluemonday.UGCPolicy()
-
-	html := p.Sanitize(post.Content)
-	post.Content = html
+	post.Content = sanitizeHtml(post.Content)
 
 	user := model.GetUserById(id)
 
@@ -28,10 +23,7 @@ func AddPost(c *gin.Context) {
 	if dbErr != nil {
 		fmt.Print("ERROR = ")
 		fmt.Println(dbErr.Error())
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": dbErr.Error(),
-			"status":  false,
-		})
+		abortError(c, http.StatusInternalServerError, dbErr.Error())
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -46,10 +38,7 @@ func GetPosts(c *gin.Context) {
 	err := model.GetAllPost(&posts, &users)
 
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"stats":   false,
-			"message": err.Error(),
-		})
+		abortError(c, http.StatusInternalServerError, err.Error())
 	}
 
 	c.JSON(http.StatusOK, gin.H{

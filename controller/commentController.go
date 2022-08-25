@@ -6,17 +6,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
-	"github.com/microcosm-cc/bluemonday"
 )
 
 func AddComment(c *gin.Context) {
 	var comment model.Comment
 	c.BindJSON(&comment)
 
-	p := bluemonday.UGCPolicy()
-
-	html := p.Sanitize(comment.Content)
-	comment.Content = html
+	comment.Content = sanitizeHtml(comment.Content)
 
 	post, err := model.GetPostByID(comment.PostID)
 	if err != nil {
@@ -32,10 +28,7 @@ func AddComment(c *gin.Context) {
 	dbErr := model.CreateComment(&user, &post, &comment)
 
 	if dbErr != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"status":  false,
-			"message": dbErr.Error(),
-		})
+		abortError(c, http.StatusInternalServerError, dbErr.Error())
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -53,10 +46,7 @@ func GetComments(c *gin.Context) {
 	err := model.GetCommentByPost(str_id, &comments)
 
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		abortError(c, http.StatusInternalServerError, err.Error())
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -9,7 +9,6 @@ import (
 )
 
 type User struct {
-	// tableName struct{} `pg:"users"`
 	gorm.Model
 	Email     string `json:"email" gorm:"unique"`
 	Password  []byte `json:"-"`
@@ -20,12 +19,7 @@ type User struct {
 	Dob       time.Time
 	Posts     []Post    `json:"-"`
 	Comments  []Comment `json:"-"`
-	// PostLikes []PostLike
-	// Comments      []Comment
-	// LikedComments []*Comment `gorm:"many2many:user_likedcomments"`
-	// Replies       []Reply
-	// SharedFrom    []*Share `gorm:"many2many:user_sharedfrom"`
-	// SharedTo      []*Share `gorm:"many2many:user_sharedto"`
+	Replies   []Reply   `json:"-"`
 }
 
 func GetUserById(id string) User {

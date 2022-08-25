@@ -151,9 +151,6 @@ func ClientAuth(c *gin.Context) {
 		})
 	} else {
 		c.Error(err)
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"status":  status,
-			"message": "Client is unaouthorized",
-		})
+		abortError(c, http.StatusUnauthorized, err.Error())
 	}
 }

@@ -12,10 +12,7 @@ import (
 func getUserID(c *gin.Context) string {
 	status, token, err := CheckAuth(c)
 	if status == false {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"status":  status,
-			"message": err.Error(),
-		})
+		abortError(c, http.StatusUnauthorized, err.Error())
 	}
 
 	claims := token.Claims.(*jwt.StandardClaims)
@@ -53,10 +50,7 @@ func UpdateProfile(c *gin.Context) {
 
 	if bindErr != nil {
 		c.Error(bindErr)
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": bindErr.Error(),
-		})
+		abortError(c, http.StatusBadRequest, bindErr.Error())
 	}
 
 	models.UpdateUser(&user, "password, email, id", updateUser)
