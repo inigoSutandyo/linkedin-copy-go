@@ -11,8 +11,9 @@ import (
 
 func getUserID(c *gin.Context) string {
 	status, token, err := CheckAuth(c)
-	if status == false {
+	if status == false || err != nil {
 		abortError(c, http.StatusUnauthorized, err.Error())
+		// return "", err
 	}
 
 	claims := token.Claims.(*jwt.StandardClaims)

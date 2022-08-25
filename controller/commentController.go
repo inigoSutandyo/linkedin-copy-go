@@ -31,19 +31,26 @@ func AddComment(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, dbErr.Error())
 	}
 
+	// AddReplyDebug(&comment, &user)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
 		"comment": comment,
 	})
 }
 
-func GetComments(c *gin.Context) {
-	str_id, _ := c.GetQuery("id")
-	// id64, _ := strconv.ParseUint(str_id, 10, 32)
-	// id := uint(id64)
+func AddReplyDebug(comment *model.Comment, user *model.User) {
+	var reply = model.Reply{
+		Content:   "<p>Testing</p>",
+		CommentID: comment.ID,
+	}
+	model.CreateReply(user, comment, &reply)
+}
 
+func GetComments(c *gin.Context) {
+	post_id, _ := c.GetQuery("id")
 	var comments []model.Comment
-	err := model.GetCommentByPost(str_id, &comments)
+	err := model.GetCommentByPost(post_id, &comments)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())

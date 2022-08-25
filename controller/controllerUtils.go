@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/microcosm-cc/bluemonday"
 )
@@ -17,4 +19,14 @@ func abortError(c *gin.Context, code int, message string) {
 		"status":  false,
 		"message": message,
 	})
+}
+
+func toUint(num string) (uint, error) {
+	num64, err := strconv.ParseUint(num, 10, 32)
+	if err != nil {
+		return 0, err
+	}
+
+	res := uint(num64)
+	return res, err
 }

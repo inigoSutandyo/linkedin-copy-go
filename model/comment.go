@@ -28,3 +28,9 @@ func GetCommentByPost(id string, comments *[]Comment) error {
 	err := utils.DB.Joins("User").Joins("Post").Find(comments, "comments.post_id = ?", id).Error
 	return err
 }
+
+func GetCommentById(id uint) (Comment, error) {
+	var comment Comment
+	err := utils.DB.First(&comment, id).Error
+	return comment, err
+}
