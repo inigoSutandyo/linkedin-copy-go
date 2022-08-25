@@ -7,13 +7,14 @@ import (
 
 type Post struct {
 	gorm.Model
-	Title      string    `json:"-"`
-	Content    string    `json:"content" gorm:"text"`
-	Attachment string    `json:"attachment"`
-	Likes      int       `json:"likes"`
-	UserID     uint      `json:"-"`
-	User       User      `json:"user"`
-	Comments   []Comment `json:"-"`
+	Title      string     `json:"-"`
+	Content    string     `json:"content" gorm:"text"`
+	Attachment string     `json:"attachment"`
+	Likes      int        `json:"likes"`
+	UserID     uint       `json:"-"`
+	User       User       `json:"user"`
+	Comments   []Comment  `json:"-"`
+	PostLikes  []PostLike `json:"-"`
 	// Template   Template `gorm:"embedded"`s
 	// PostLikes  []PostLike
 }

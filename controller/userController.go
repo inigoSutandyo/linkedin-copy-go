@@ -32,10 +32,15 @@ func GetUser(c *gin.Context) {
 	user = models.GetUserById(id)
 	message := "success"
 	posts := models.GetUserPost(&user)
+	likedPost, err := models.GetLikedPostData(&user)
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+	}
 	c.JSON(http.StatusOK, gin.H{
-		"user":    user,
-		"posts":   posts,
-		"message": message,
+		"user":       user,
+		"posts":      posts,
+		"message":    message,
+		"likedposts": likedPost,
 	})
 
 }

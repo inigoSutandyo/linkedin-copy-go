@@ -17,9 +17,10 @@ type User struct {
 	LastName  string `json:"lastname"`
 	Phone     string `json:"phone" gorm:"unique"`
 	Dob       time.Time
-	Posts     []Post    `json:"-"`
-	Comments  []Comment `json:"-"`
-	Replies   []Reply   `json:"-"`
+	Posts     []Post     `json:"-"`
+	Comments  []Comment  `json:"-"`
+	Replies   []Reply    `json:"-"`
+	PostLikes []PostLike `json:"-"`
 }
 
 func GetUserById(id string) User {

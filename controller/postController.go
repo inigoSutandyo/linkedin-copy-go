@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
+	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 	// "github.com/fmpwizard/go-quilljs-delta/delta"
 )
 
@@ -44,5 +45,32 @@ func GetPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"posts": posts,
 		// "users": users,
+	})
+}
+
+func AddLikePost(c *gin.Context) {
+	id := getUserID(c)
+	user := model.GetUserById(id)
+
+	id_str, _ := c.GetQuery("id")
+	post_id, err := toUint(id_str)
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+	}
+
+	post, err2 := model.GetPostByID(post_id)
+
+	if err2 != nil {
+		abortError(c, http.StatusInternalServerError, err2.Error())
+	}
+
+	err3 := model.CreatePostLike(&user, &post)
+	if err3 != nil {
+		abortError(c, http.StatusInternalServerError, err3.Error())
+	}
+	post.Likes = post.Likes + 1
+	utils.DB.Save(&post)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
 	})
 }
