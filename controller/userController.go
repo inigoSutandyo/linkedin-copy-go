@@ -33,6 +33,13 @@ func GetUser(c *gin.Context) {
 	message := "success"
 	posts := models.GetUserPost(&user)
 	likedPost, err := models.GetLikedPostData(&user)
+
+	var postIds []uint
+
+	for _, liked := range likedPost {
+		postIds = append(postIds, liked.PostID)
+	}
+
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 	}
@@ -40,7 +47,7 @@ func GetUser(c *gin.Context) {
 		"user":       user,
 		"posts":      posts,
 		"message":    message,
-		"likedposts": likedPost,
+		"likedposts": postIds,
 	})
 
 }

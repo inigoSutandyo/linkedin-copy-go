@@ -22,6 +22,7 @@ type Post struct {
 func GetPostByID(id uint) (Post, error) {
 	var post Post
 	err := utils.DB.First(&post, id).Error
+	getPostLikeCount(&post)
 
 	return post, err
 }
@@ -36,5 +37,17 @@ func CreatePost(user *User, post *Post) error {
 func GetAllPost(posts *[]Post, users *[]User) error {
 	// err := utils.DB.Find(posts).Error
 	err := utils.DB.Preload("User").Find(posts).Error
+
+	for _, post := range *posts {
+		getPostLikeCount(&post)
+	}
+
 	return err
+}
+
+func getPostLikeCount(post *Post) {
+	count := utils.DB.Model(post).Association("PostLikes").Count()
+
+	post.Likes = int(count)
+	utils.DB.Save(post)
 }

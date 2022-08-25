@@ -1,8 +1,6 @@
 package model
 
 import (
-	"fmt"
-
 	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 	"gorm.io/gorm"
 )
@@ -17,8 +15,11 @@ type PostLike struct {
 
 func CreatePostLike(user *User, post *Post) error {
 	var postLike PostLike
-	err := utils.DB.Model(post).Association("Replies").Append(&postLike)
-	err2 := utils.DB.Model(user).Association("Replies").Append(&postLike)
+	postLike.UserID = user.ID
+	postLike.PostID = post.ID
+	err := utils.DB.Model(post).Association("PostLikes").Append(&postLike)
+	err2 := utils.DB.Model(user).Association("PostLikes").Append(&postLike)
+	getPostLikeCount(post)
 
 	if err != nil {
 		return err
@@ -32,6 +33,10 @@ func CreatePostLike(user *User, post *Post) error {
 func GetLikedPostData(user *User) ([]PostLike, error) {
 	var postLike []PostLike
 	err := utils.DB.Model(&user).Association("PostLikes").Find(&postLike)
-	fmt.Println(postLike)
+	// fmt.Println(postLike)
 	return postLike, err
+}
+
+func DeleteLikedPostData(userId string, postId string) {
+	utils.DB.Where("user_id = ? AND post_id = ?", userId, postId).Delete(&PostLike{})
 }
