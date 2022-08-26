@@ -52,8 +52,8 @@ func AddLikePost(c *gin.Context) {
 	user := model.GetUserById(id)
 
 	id_str, _ := c.GetQuery("id")
-	fmt.Printf("ID = %s\n", id_str)
 	post_id, err := toUint(id_str)
+
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -65,13 +65,16 @@ func AddLikePost(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, err2.Error())
 		return
 	}
+	postLike, _ := model.GetPostLike(user.ID, post_id)
+	if postLike.ID > 0 {
+		abortError(c, http.StatusBadRequest, "Already Liked")
+	}
 
 	err3 := model.CreatePostLike(&user, &post)
 	if err3 != nil {
 		abortError(c, http.StatusInternalServerError, err3.Error())
 		return
 	}
-	// post.Likes = post.Likes + 1
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "success",

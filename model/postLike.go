@@ -30,10 +30,16 @@ func CreatePostLike(user *User, post *Post) error {
 	return nil
 }
 
+func GetPostLike(userId uint, postId uint) (PostLike, error) {
+	var postLike PostLike
+	err := utils.DB.First(&postLike, "user_id = ? AND post_id = ?", userId, postId).Error
+	return postLike, err
+}
+
 func GetLikedPostData(user *User) ([]PostLike, error) {
 	var postLike []PostLike
 	err := utils.DB.Model(&user).Association("PostLikes").Find(&postLike)
-	// fmt.Println(postLike)
+
 	return postLike, err
 }
 
