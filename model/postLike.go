@@ -39,4 +39,5 @@ func GetLikedPostData(user *User) ([]PostLike, error) {
 
 func DeleteLikedPostData(userId string, postId string) {
 	utils.DB.Where("user_id = ? AND post_id = ?", userId, postId).Delete(&PostLike{})
+	getPostLikeCountById(postId)
 }

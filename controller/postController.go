@@ -76,6 +76,7 @@ func AddLikePost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "success",
 		"likepost": post_id,
+		"post":     post,
 	})
 }
 
@@ -83,4 +84,15 @@ func RemoveLikePost(c *gin.Context) {
 	id := getUserID(c)
 	postId, _ := c.GetQuery("id")
 	model.DeleteLikedPostData(id, postId)
+	uint_id, _ := toUint(postId)
+	post, err := model.GetPostByID(uint_id)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "success",
+		"likepost": postId,
+		"post":     post,
+	})
 }
