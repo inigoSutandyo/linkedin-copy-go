@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
@@ -35,14 +36,24 @@ func AddPost(c *gin.Context) {
 func GetPosts(c *gin.Context) {
 	var posts []model.Post
 	var users []model.User
-	err := model.GetAllPost(&posts, &users)
-
+	offset := c.Query("offset")
+	limit := c.Query("limit")
+	offset_int, _ := strconv.ParseInt(offset, 10, 32)
+	limit_int, _ := strconv.ParseInt(limit, 10, 32)
+	err := model.GetPostsInRange(&posts, &users, int(offset_int), int(limit_int))
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 	}
-
+	// fmt.Println(posts[0])
+	var hasMore bool
+	if len(posts) < int(limit_int) {
+		hasMore = false
+	} else {
+		hasMore = true
+	}
 	c.JSON(http.StatusOK, gin.H{
-		"posts": posts,
+		"posts":   posts,
+		"hasmore": hasMore,
 		// "users": users,
 	})
 }

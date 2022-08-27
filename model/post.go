@@ -28,9 +28,8 @@ func GetPostByID(id uint) (Post, error) {
 }
 
 func CreatePost(user *User, post *Post) error {
-	// fmt.Println(user.Email)
-	// fmt.Println(post.Content)
 	err := utils.DB.Model(user).Association("Posts").Append(post)
+	err = utils.DB.Preload("User").First(post).Error
 	return err
 }
 
@@ -42,6 +41,15 @@ func GetAllPost(posts *[]Post, users *[]User) error {
 		getPostLikeCount(&post)
 	}
 
+	return err
+}
+
+func GetPostsInRange(posts *[]Post, users *[]User, offset int, limit int) error {
+	err := utils.DB.Preload("User").Order("posts.created_at desc").Limit(limit).Offset(offset).Find(posts).Error
+
+	for _, post := range *posts {
+		getPostLikeCount(&post)
+	}
 	return err
 }
 
