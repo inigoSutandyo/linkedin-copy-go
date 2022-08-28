@@ -1,6 +1,8 @@
 package model
 
 import (
+	"net/http"
+
 	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 	"gorm.io/gorm"
 )
@@ -11,12 +13,12 @@ type Post struct {
 	Content    string     `json:"content" gorm:"text"`
 	Attachment string     `json:"attachment"`
 	Likes      int        `json:"likes"`
+	File       []byte     `json:"file"`
+	FileMime   string     `json:"mime"`
 	UserID     uint       `json:"-"`
 	User       User       `json:"user"`
 	Comments   []Comment  `json:"-"`
 	PostLikes  []PostLike `json:"-"`
-	// Template   Template `gorm:"embedded"`s
-	// PostLikes  []PostLike
 }
 
 func GetPostByID(id uint) (Post, error) {
@@ -51,6 +53,13 @@ func GetPostsInRange(posts *[]Post, users *[]User, offset int, limit int) error 
 		getPostLikeCount(&post)
 	}
 	return err
+}
+
+func UploadFilePost(post *Post, data []byte) {
+	post.File = data
+	post.FileMime = http.DetectContentType(data)
+	utils.DB.Save(post)
+	utils.DB.Preload("User").First(post)
 }
 
 func getPostLikeCount(post *Post) {
