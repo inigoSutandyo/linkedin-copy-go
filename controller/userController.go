@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -43,8 +45,10 @@ func GetUser(c *gin.Context) {
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 	}
+	s := http.DetectContentType(user.Image)
 	c.JSON(http.StatusOK, gin.H{
 		"user":       user,
+		"image_type": s,
 		"posts":      posts,
 		"message":    message,
 		"likedposts": postIds,
@@ -73,5 +77,32 @@ func UpdateProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
 		"user":    user,
+	})
+}
+
+func UploadProfilePicture(c *gin.Context) {
+	id := getUserID(c)
+	user := models.GetUserById(id)
+
+	image, _, err := c.Request.FormFile("picture")
+
+	if err != nil {
+		abortError(c, http.StatusBadRequest, err.Error())
+	}
+
+	buf := bytes.NewBuffer(nil)
+	_, err2 := io.Copy(buf, image)
+	if err2 != nil {
+		abortError(c, http.StatusInternalServerError, err2.Error())
+	}
+	err3 := models.UploadImageUser(&user, buf)
+	if err3 != nil {
+		abortError(c, http.StatusInternalServerError, err3.Error())
+	}
+	s := http.DetectContentType(buf.Bytes())
+	c.JSON(http.StatusOK, gin.H{
+		"message":    "success",
+		"user":       user,
+		"image_type": s,
 	})
 }

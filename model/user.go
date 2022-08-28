@@ -1,6 +1,7 @@
 package model
 
 import (
+	"bytes"
 	"fmt"
 	"time"
 
@@ -16,6 +17,7 @@ type User struct {
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Phone     string `json:"phone" gorm:"unique"`
+	Image     []byte `json:"image"`
 	Dob       time.Time
 	Posts     []Post     `json:"-"`
 	Comments  []Comment  `json:"-"`
@@ -26,7 +28,7 @@ type User struct {
 func GetUserById(id string) User {
 	var user User
 	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
-	fmt.Println(user)
+	// fmt.Println(user)
 	return user
 }
 
@@ -55,4 +57,10 @@ func GetUserPost(user *User) []Post {
 	var post []Post
 	utils.DB.Model(user).Association("Posts").Find(&post)
 	return post
+}
+
+func UploadImageUser(user *User, buf *bytes.Buffer) error {
+	user.Image = buf.Bytes()
+	err := utils.DB.Save(user).Error
+	return err
 }
