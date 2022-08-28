@@ -33,23 +33,24 @@ func GetUser(c *gin.Context) {
 	fmt.Println("ID = " + id)
 	user = models.GetUserById(id)
 	message := "success"
-	// likedPost, err := models.GetLikedPostData(&user)
+	likedPost, err := models.GetLikedPostData(&user)
 
-	// var postIds []uint
+	var postIds []uint
 
-	// for _, liked := range likedPost {
-	// 	postIds = append(postIds, liked.PostID)
-	// }
+	for _, liked := range likedPost {
+		postIds = append(postIds, liked.PostID)
+	}
 
-	// if err != nil {
-	// 	abortError(c, http.StatusInternalServerError, err.Error())
-	// }
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+	}
 	s := http.DetectContentType(user.Image)
 	models.SaveImageMime(&user)
 	c.JSON(http.StatusOK, gin.H{
 		"user":       user,
 		"image_type": s,
 		"message":    message,
+		"likedposts": postIds,
 	})
 
 }
