@@ -3,6 +3,7 @@ package model
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"time"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
@@ -18,6 +19,7 @@ type User struct {
 	LastName  string `json:"lastname"`
 	Phone     string `json:"phone" gorm:"unique"`
 	Image     []byte `json:"image"`
+	ImageMime string `json:"imagemime"`
 	Dob       time.Time
 	Posts     []Post     `json:"-"`
 	Comments  []Comment  `json:"-"`
@@ -60,7 +62,15 @@ func GetUserPost(user *User) []Post {
 }
 
 func UploadImageUser(user *User, buf *bytes.Buffer) error {
+	s := http.DetectContentType(buf.Bytes())
 	user.Image = buf.Bytes()
+	user.ImageMime = s
 	err := utils.DB.Save(user).Error
 	return err
+}
+
+func SaveImageMime(user *User) {
+	mime := http.DetectContentType(user.Image)
+	user.ImageMime = mime
+	utils.DB.Save(user)
 }
