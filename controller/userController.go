@@ -15,7 +15,7 @@ func getUserID(c *gin.Context) string {
 	status, token, err := CheckAuth(c)
 	if status == false || err != nil {
 		abortError(c, http.StatusUnauthorized, err.Error())
-		// return "", err
+		return ""
 	}
 
 	claims := token.Claims.(*jwt.StandardClaims)
@@ -43,6 +43,7 @@ func GetUser(c *gin.Context) {
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 	s := http.DetectContentType(user.Image)
 	models.SaveImageMime(&user)
@@ -67,6 +68,7 @@ func UpdateProfile(c *gin.Context) {
 	if bindErr != nil {
 		c.Error(bindErr)
 		abortError(c, http.StatusBadRequest, bindErr.Error())
+		return
 	}
 
 	models.UpdateUser(&user, "password, email, id", updateUser)
@@ -87,16 +89,19 @@ func UploadProfilePicture(c *gin.Context) {
 
 	if err != nil {
 		abortError(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	buf := bytes.NewBuffer(nil)
 	_, err2 := io.Copy(buf, image)
 	if err2 != nil {
 		abortError(c, http.StatusInternalServerError, err2.Error())
+		return
 	}
 	err3 := models.UploadImageUser(&user, buf)
 	if err3 != nil {
 		abortError(c, http.StatusInternalServerError, err3.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

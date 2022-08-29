@@ -29,5 +29,7 @@ func Routes(router *gin.Engine) {
 
 		api.POST("/home/post/comment/reply/add", controllers.AddReply)
 		api.GET("/home/post/comment/reply", controllers.GetReplies)
+
+		api.GET("/search", controllers.Search)
 	}
 }

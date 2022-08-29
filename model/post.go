@@ -77,3 +77,9 @@ func getPostLikeCountById(id string) {
 	post.Likes = int(count)
 	utils.DB.Save(&post)
 }
+
+func SearchPost(posts *[]Post, param string) error {
+	param = "%" + param + "%"
+	utils.DB.Raw("SELECT * FROM posts WHERE posts.content LIKE ?", param).Scan(posts)
+	return utils.DB.Preload("User").Find(posts).Error
+}
