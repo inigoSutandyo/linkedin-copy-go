@@ -9,13 +9,12 @@ import (
 
 func Search(c *gin.Context) {
 
-	var res models.Search
-	c.BindJSON(&res)
+	param := c.Query("search")
 
 	var users []models.User
 	var posts []models.Post
-	err := models.SearchUserByName(&users, res.Param)
-	err2 := models.SearchPost(&posts, res.Param)
+	err := models.SearchUserByName(&users, param)
+	err2 := models.SearchPost(&posts, param)
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		return
