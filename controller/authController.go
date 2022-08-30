@@ -134,8 +134,8 @@ func CheckAuth(c *gin.Context) (bool, *jwt.Token, error) {
 	token, tokenErr := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(utils.GetEnv("SECRET_KEY")), nil
 	})
-	fmt.Print("Token = ")
-	fmt.Println(token)
+	// fmt.Print("Token = ")
+	// fmt.Println(token)
 
 	if tokenErr != nil {
 		return false, nil, tokenErr

@@ -7,8 +7,10 @@ import (
 
 func Migrate() {
 	// utils.DB.Migrator().CreateConstraint(&models.User{}, "Posts")
-	// utils.DB.Migrator().DropTable(&models.Post{})
+	// utils.DB.Migrator().DropTable( &models.PostLike{}, &models.Comment{}, &models.Reply{}, &models.Post{}, &models.User{})
 	// utils.DB.Migrator().DropTable(&models.Comment{})
 	// utils.DB.Migrator().DropTable(&models.PostLike{})
+	// utils.DB.Migrator().DropColumn(&models.User{}, "Image")
+	// utils.DB.Migrator().DropColumn(&models.User{}, "ImageMime")
 	utils.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Reply{}, &models.PostLike{})
 }

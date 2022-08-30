@@ -1,9 +1,7 @@
 package model
 
 import (
-	"bytes"
 	"fmt"
-	"net/http"
 	"time"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
@@ -12,19 +10,19 @@ import (
 
 type User struct {
 	gorm.Model
-	Email     string `json:"email" gorm:"unique"`
-	Password  []byte `json:"-"`
-	Headline  string `json:"headline"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Phone     string `json:"phone" gorm:"unique"`
-	Image     []byte `json:"image"`
-	ImageMime string `json:"imagemime"`
-	Dob       time.Time
-	Posts     []Post     `json:"-"`
-	Comments  []Comment  `json:"-"`
-	Replies   []Reply    `json:"-"`
-	PostLikes []PostLike `json:"-"`
+	Email       string `json:"email" gorm:"unique"`
+	Password    []byte `json:"-"`
+	Headline    string `json:"headline"`
+	FirstName   string `json:"firstname"`
+	LastName    string `json:"lastname"`
+	Phone       string `json:"phone" gorm:"unique"`
+	ImageURL    string `json:"imageurl"`
+	Dob         time.Time
+	Posts       []Post     `json:"-"`
+	Comments    []Comment  `json:"-"`
+	Replies     []Reply    `json:"-"`
+	PostLikes   []PostLike `json:"-"`
+	Connections []*User    `gorm:"many2many:user_connections"`
 }
 
 func GetUserById(id string) User {
@@ -61,18 +59,10 @@ func GetUserPost(user *User) []Post {
 	return post
 }
 
-func UploadImageUser(user *User, buf *bytes.Buffer) error {
-	s := http.DetectContentType(buf.Bytes())
-	user.Image = buf.Bytes()
-	user.ImageMime = s
+func UploadImageUser(user *User, url string) error {
+	user.ImageURL = "https://res.cloudinary.com/dy8gj7hrx/image/upload/v1661868616/users/profiles/zpc2m2sy2taacfe836nj.jpg"
 	err := utils.DB.Save(user).Error
 	return err
-}
-
-func SaveImageMime(user *User) {
-	mime := http.DetectContentType(user.Image)
-	user.ImageMime = mime
-	utils.DB.Save(user)
 }
 
 func SearchUserByName(users *[]User, param string) error {

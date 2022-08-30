@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,11 +43,11 @@ func GetUser(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	s := http.DetectContentType(user.Image)
-	models.SaveImageMime(&user)
+	// s := http.DetectContentType(user.Image)
+	// models.SaveImageMime(&user)
 	c.JSON(http.StatusOK, gin.H{
 		"user":       user,
-		"image_type": s,
+		"image_type": nil,
 		"message":    message,
 		"likedposts": postIds,
 	})
@@ -83,30 +81,22 @@ func UpdateProfile(c *gin.Context) {
 
 func UploadProfilePicture(c *gin.Context) {
 	id := getUserID(c)
+	if id == "" {
+		abortError(c, http.StatusBadRequest, "Not Authorized")
+		return
+	}
 	user := models.GetUserById(id)
+	url := c.Query("url")
 
-	image, _, err := c.Request.FormFile("picture")
+	err := models.UploadImageUser(&user, url)
 
 	if err != nil {
-		abortError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	buf := bytes.NewBuffer(nil)
-	_, err2 := io.Copy(buf, image)
-	if err2 != nil {
-		abortError(c, http.StatusInternalServerError, err2.Error())
-		return
-	}
-	err3 := models.UploadImageUser(&user, buf)
-	if err3 != nil {
-		abortError(c, http.StatusInternalServerError, err3.Error())
+		abortError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":    "success",
-		"user":       user,
-		"image_type": user.ImageMime,
+		"message": "success",
+		"user":    user,
 	})
 }
