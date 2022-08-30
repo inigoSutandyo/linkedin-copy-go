@@ -77,5 +77,5 @@ func SaveImageMime(user *User) {
 
 func SearchUserByName(users *[]User, param string) error {
 	param = "%" + param + "%"
-	return utils.DB.Raw("SELECT * FROM users WHERE users.first_name LIKE ? OR users.last_name LIKE ?", param, param).Scan(users).Error
+	return utils.DB.Raw("SELECT * FROM users WHERE users.first_name ILIKE ? OR users.last_name ILIKE ?", param, param).Scan(users).Error
 }
