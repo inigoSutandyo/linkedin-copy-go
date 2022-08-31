@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -37,23 +35,17 @@ func AddPost(c *gin.Context) {
 
 func UploadFilePost(c *gin.Context) {
 	postId := c.Request.FormValue("id")
-	file, _, err := c.Request.FormFile("file")
+	publicId := c.Request.FormValue("publicid")
+	fileUrl := c.Request.FormValue("fileurl")
+	id, _ := toUint(postId)
+	post, err := model.GetPostByID(id)
+
 	if err != nil {
 		abortError(c, http.StatusBadRequest, err.Error())
-	}
-	id, _ := toUint(postId)
-	post, err2 := model.GetPostByID(id)
-	if err2 != nil {
-		abortError(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
-	buf := bytes.NewBuffer(nil)
-	_, err3 := io.Copy(buf, file)
-	if err3 != nil {
-		abortError(c, http.StatusInternalServerError, err2.Error())
-	}
-
-	model.UploadFilePost(&post, buf.Bytes())
+	model.UploadFilePost(&post, fileUrl, publicId)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",

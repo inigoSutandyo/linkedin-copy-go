@@ -10,25 +10,28 @@ import (
 
 type User struct {
 	gorm.Model
-	Email       string `json:"email" gorm:"unique"`
-	Password    []byte `json:"-"`
-	Headline    string `json:"headline"`
-	FirstName   string `json:"firstname"`
-	LastName    string `json:"lastname"`
-	Phone       string `json:"phone" gorm:"unique"`
-	ImageURL    string `json:"imageurl"`
-	Dob         time.Time
-	Posts       []Post     `json:"-"`
-	Comments    []Comment  `json:"-"`
-	Replies     []Reply    `json:"-"`
-	PostLikes   []PostLike `json:"-"`
-	Connections []*User    `gorm:"many2many:user_connections"`
+	Email              string      `json:"email" gorm:"unique"`
+	Password           []byte      `json:"-"`
+	Headline           string      `json:"headline"`
+	FirstName          string      `json:"firstname"`
+	LastName           string      `json:"lastname"`
+	Phone              string      `json:"phone" gorm:"unique"`
+	ImageURL           string      `json:"imageurl"`
+	ImagePublicID      string      `json:"imageid"`
+	BackgroundURL      string      `json:"backgroundurl"`
+	BackgroundPublicID string      `json:"backgroundid"`
+	Dob                time.Time   `json:"dob"`
+	Posts              []Post      `json:"-"`
+	Comments           []Comment   `json:"-"`
+	Replies            []Reply     `json:"-"`
+	PostLikes          []PostLike  `json:"-"`
+	Connections        []*User     `gorm:"many2many:user_connections"`
+	Eudcations         []Education `json:"-"`
 }
 
 func GetUserById(id string) User {
 	var user User
 	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
-	// fmt.Println(user)
 	return user
 }
 
@@ -59,8 +62,9 @@ func GetUserPost(user *User) []Post {
 	return post
 }
 
-func UploadImageUser(user *User, url string) error {
-	user.ImageURL = "https://res.cloudinary.com/dy8gj7hrx/image/upload/v1661868616/users/profiles/zpc2m2sy2taacfe836nj.jpg"
+func UploadImageUser(user *User, url string, publicid string) error {
+	user.ImageURL = url
+	user.ImagePublicID = publicid
 	err := utils.DB.Save(user).Error
 	return err
 }

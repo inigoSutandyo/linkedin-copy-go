@@ -10,7 +10,7 @@ func Migrate() {
 	// utils.DB.Migrator().DropTable( &models.PostLike{}, &models.Comment{}, &models.Reply{}, &models.Post{}, &models.User{})
 	// utils.DB.Migrator().DropTable(&models.Comment{})
 	// utils.DB.Migrator().DropTable(&models.PostLike{})
-	// utils.DB.Migrator().DropColumn(&models.User{}, "Image")
-	// utils.DB.Migrator().DropColumn(&models.User{}, "ImageMime")
+	// utils.DB.Migrator().DropColumn(&models.Post{}, "FileMime")
+	// utils.DB.Migrator().DropColumn(&models.Post{}, "File")
 	utils.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Reply{}, &models.PostLike{})
 }

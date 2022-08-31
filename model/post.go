@@ -1,24 +1,22 @@
 package model
 
 import (
-	"net/http"
-
 	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 	"gorm.io/gorm"
 )
 
 type Post struct {
 	gorm.Model
-	Title      string     `json:"-"`
-	Content    string     `json:"content" gorm:"text"`
-	Attachment string     `json:"attachment"`
-	Likes      int        `json:"likes"`
-	File       []byte     `json:"file"`
-	FileMime   string     `json:"mime"`
-	UserID     uint       `json:"-"`
-	User       User       `json:"user"`
-	Comments   []Comment  `json:"-"`
-	PostLikes  []PostLike `json:"-"`
+	Title        string     `json:"-"`
+	Content      string     `json:"content" gorm:"text"`
+	Attachment   string     `json:"attachment"`
+	Likes        int        `json:"likes"`
+	FileUrl      string     `json:"fileurl"`
+	FilePublicID string     `json:"fileid"`
+	UserID       uint       `json:"-"`
+	User         User       `json:"user"`
+	Comments     []Comment  `json:"-"`
+	PostLikes    []PostLike `json:"-"`
 }
 
 func GetPostByID(id uint) (Post, error) {
@@ -55,9 +53,9 @@ func GetPostsInRange(posts *[]Post, users *[]User, offset int, limit int) error 
 	return err
 }
 
-func UploadFilePost(post *Post, data []byte) {
-	post.File = data
-	post.FileMime = http.DetectContentType(data)
+func UploadFilePost(post *Post, url string, publicid string) {
+	post.FileUrl = url
+	post.FilePublicID = publicid
 	utils.DB.Save(post)
 	utils.DB.Preload("User").First(post)
 }

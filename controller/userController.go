@@ -43,8 +43,6 @@ func GetUser(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	// s := http.DetectContentType(user.Image)
-	// models.SaveImageMime(&user)
 	c.JSON(http.StatusOK, gin.H{
 		"user":       user,
 		"image_type": nil,
@@ -87,8 +85,9 @@ func UploadProfilePicture(c *gin.Context) {
 	}
 	user := models.GetUserById(id)
 	url := c.Query("url")
+	publicid := c.Query("publicid")
 
-	err := models.UploadImageUser(&user, url)
+	err := models.UploadImageUser(&user, url, publicid)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
