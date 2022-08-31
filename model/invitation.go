@@ -7,23 +7,27 @@ import (
 
 type Invitation struct {
 	gorm.Model
-	Note        string
-	Source      []User `gorm:"many2many:invitation_source" json:"source"`
-	Destination []User `gorm:"many2many:invitation_destination" json:"destination"`
+	Note          string `json:"note"`
+	SourceID      uint
+	Source        User `json:"source"`
+	DestinationID uint
+	Destination   User
 }
 
 func CreateInvitation(source *User, destination *User, note string) (Invitation, error) {
 	invite := Invitation{
-		Note: note,
+		Note:          note,
+		SourceID:      source.ID,
+		DestinationID: destination.ID,
 	}
 	err := utils.DB.Create(&invite).Error
-
+	// fmt.Println(invite)
 	if err == nil {
-		err = utils.DB.Model(&invite).Association("Source").Append(source)
+		err = utils.DB.Model(&source).Association("SourceInvitations").Append(&invite)
 	}
 
 	if err == nil {
-		err = utils.DB.Model(&invite).Association("Destination").Append(destination)
+		err = utils.DB.Model(&destination).Association("Invitations").Append(&invite)
 	}
 
 	return invite, err

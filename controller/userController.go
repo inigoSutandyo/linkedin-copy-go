@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/inigoSutandyo/linkedin-copy-go/model"
 	models "github.com/inigoSutandyo/linkedin-copy-go/model"
 )
 
@@ -31,7 +32,8 @@ func GetUser(c *gin.Context) {
 	fmt.Println("ID = " + id)
 	user = models.GetUserById(id)
 	models.GetConnection(&user)
-	message := "success"
+	model.GetInvitations(&user)
+
 	likedPost, err := models.GetLikedPostData(&user)
 
 	var postIds []uint
@@ -47,8 +49,9 @@ func GetUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"user":       user,
-		"message":    message,
+		"message":    "success",
 		"likedposts": postIds,
+		// "invites":    invites,
 	})
 
 }

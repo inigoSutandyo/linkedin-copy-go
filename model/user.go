@@ -10,23 +10,25 @@ import (
 
 type User struct {
 	gorm.Model
-	Email              string      `json:"email" gorm:"unique"`
-	Password           []byte      `json:"-"`
-	Headline           string      `json:"headline"`
-	FirstName          string      `json:"firstname"`
-	LastName           string      `json:"lastname"`
-	Phone              string      `json:"phone" gorm:"unique"`
-	ImageURL           string      `json:"imageurl"`
-	ImagePublicID      string      `json:"imageid"`
-	BackgroundURL      string      `json:"backgroundurl"`
-	BackgroundPublicID string      `json:"backgroundid"`
-	Dob                time.Time   `json:"dob"`
-	Posts              []Post      `json:"-"`
-	Comments           []Comment   `json:"-"`
-	Replies            []Reply     `json:"-"`
-	PostLikes          []PostLike  `json:"-"`
-	Connections        []*User     `gorm:"many2many:user_connections" json:"connections"`
-	Eudcations         []Education `json:"-"`
+	Email              string       `json:"email" gorm:"unique"`
+	Password           []byte       `json:"-"`
+	Headline           string       `json:"headline"`
+	FirstName          string       `json:"firstname"`
+	LastName           string       `json:"lastname"`
+	Phone              string       `json:"phone" gorm:"unique"`
+	ImageURL           string       `json:"imageurl"`
+	ImagePublicID      string       `json:"imageid"`
+	BackgroundURL      string       `json:"backgroundurl"`
+	BackgroundPublicID string       `json:"backgroundid"`
+	Dob                time.Time    `json:"dob"`
+	Posts              []Post       `json:"-"`
+	Comments           []Comment    `json:"-"`
+	Replies            []Reply      `json:"-"`
+	PostLikes          []PostLike   `json:"-"`
+	Connections        []*User      `gorm:"many2many:user_connections" json:"connections"`
+	Educations         []Education  `json:"-"`
+	Invitations        []Invitation `gorm:"foreignKey:DestinationID" json:"invitations"`
+	SourceInvitations  []Invitation `gorm:"foreignKey:SourceID" json:"-"`
 }
 
 func GetUserById(id string) User {
@@ -84,4 +86,10 @@ func CreateConnection(user *User, connect *User) error {
 
 func GetConnection(user *User) error {
 	return utils.DB.Preload("Connections").Find(user).Error
+}
+
+func GetInvitations(user *User) {
+	var invitations []Invitation
+	utils.DB.Preload("Source").Find(&invitations, "destination_id = ?", user.ID)
+	user.Invitations = invitations
 }
