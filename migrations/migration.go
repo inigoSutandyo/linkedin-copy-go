@@ -12,5 +12,12 @@ func Migrate() {
 	// utils.DB.Migrator().DropTable(&models.PostLike{})
 	// utils.DB.Migrator().DropColumn(&models.Post{}, "FileMime")
 	// utils.DB.Migrator().DropColumn(&models.Post{}, "File")
-	utils.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Reply{}, &models.PostLike{})
+	utils.DB.Migrator().DropTable(&models.Invitation{})
+	utils.DB.AutoMigrate(
+		&models.User{},
+		&models.Post{},
+		&models.Comment{},
+		&models.Reply{},
+		&models.PostLike{},
+		&models.Invitation{})
 }

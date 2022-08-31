@@ -19,7 +19,7 @@ func Routes(router *gin.Engine) {
 		api.GET("/user/otherprofile", controllers.GetOtherUser)
 		api.POST("/user/profile/update", controllers.UpdateProfile)
 		api.POST("/user/profile/image", controllers.UploadProfilePicture)
-
+		api.POST("/user/invite", controller.InviteUser)
 		api.GET("/user/connection", controller.UserConnections)
 		api.GET("/user/connection/add", controller.ConnectUser)
 
@@ -36,5 +36,6 @@ func Routes(router *gin.Engine) {
 		api.GET("/home/post/comment/reply", controllers.GetReplies)
 
 		api.GET("/search", controllers.Search)
+
 	}
 }

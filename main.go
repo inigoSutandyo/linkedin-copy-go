@@ -9,7 +9,7 @@ import (
 
 func main() {
 	utils.Connect()      // connect to DB
-	migrations.Migrate() // migrate user
+	migrations.Migrate() // migrate db
 	router := gin.Default()
 
 	router.Use(server.CORS)

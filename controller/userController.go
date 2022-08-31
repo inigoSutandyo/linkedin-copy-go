@@ -158,3 +158,24 @@ func UserConnections(c *gin.Context) {
 		"user":    user,
 	})
 }
+
+func InviteUser(c *gin.Context) {
+	sourceId := c.Query("source")
+	destinationId := c.Query("destination")
+	note := c.Query("note")
+
+	source := models.GetUserById(sourceId)
+	destination := models.GetUserById(destinationId)
+
+	invite, err := models.CreateInvitation(&source, &destination, note)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":    "success",
+		"invitation": invite,
+	})
+}
