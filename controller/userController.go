@@ -113,3 +113,47 @@ func UploadProfilePicture(c *gin.Context) {
 		"user":    user,
 	})
 }
+
+func ConnectUser(c *gin.Context) {
+	userId := c.Query("userId")
+	connectId := c.Query("connectId")
+
+	if userId == "" || connectId == "" {
+		abortError(c, http.StatusBadRequest, "Data not found")
+		return
+	}
+
+	user := models.GetUserById(userId)
+	connect := models.GetUserById(connectId)
+
+	err := models.CreateConnection(&user, &connect)
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
+
+func UserConnections(c *gin.Context) {
+	id := c.Query("id")
+
+	if id == "" {
+		abortError(c, http.StatusBadRequest, "Data not found")
+		return
+	}
+
+	user := models.GetUserById(id)
+	err := models.GetConnection(&user)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"user":    user,
+	})
+}

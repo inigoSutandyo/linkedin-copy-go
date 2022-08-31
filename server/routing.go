@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/inigoSutandyo/linkedin-copy-go/controller"
 	controllers "github.com/inigoSutandyo/linkedin-copy-go/controller"
 )
 
@@ -18,6 +19,9 @@ func Routes(router *gin.Engine) {
 		api.GET("/user/otherprofile", controllers.GetOtherUser)
 		api.POST("/user/profile/update", controllers.UpdateProfile)
 		api.POST("/user/profile/image", controllers.UploadProfilePicture)
+
+		api.GET("/user/connection", controller.UserConnections)
+		api.GET("/user/connection/add", controller.ConnectUser)
 
 		api.GET("/home/post", controllers.GetPosts)
 		api.POST("/home/post/add", controllers.AddPost)

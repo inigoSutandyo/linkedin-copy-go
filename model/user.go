@@ -73,3 +73,15 @@ func SearchUserByName(users *[]User, param string) error {
 	param = "%" + param + "%"
 	return utils.DB.Raw("SELECT * FROM users WHERE users.first_name ILIKE ? OR users.last_name ILIKE ?", param, param).Scan(users).Error
 }
+
+func CreateConnection(user *User, connect *User) error {
+	err := utils.DB.Model(user).Association("Connections").Append(connect)
+	if err == nil {
+		err = utils.DB.Model(connect).Association("Connections").Append(user)
+	}
+	return err
+}
+
+func GetConnection(user *User) error {
+	return utils.DB.Preload("Connections").Find(user).Error
+}
