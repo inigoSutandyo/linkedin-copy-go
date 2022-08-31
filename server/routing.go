@@ -15,6 +15,7 @@ func Routes(router *gin.Engine) {
 		api.POST("/auth/logout", controllers.Logout)
 
 		api.GET("/user/profile", controllers.GetUser)
+		api.GET("/user/otherprofile", controllers.GetOtherUser)
 		api.POST("/user/profile/update", controllers.UpdateProfile)
 		api.POST("/user/profile/image", controllers.UploadProfilePicture)
 

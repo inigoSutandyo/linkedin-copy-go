@@ -52,6 +52,20 @@ func GetUser(c *gin.Context) {
 
 }
 
+func GetOtherUser(c *gin.Context) {
+	id, _ := c.GetQuery("id")
+	if id == "" {
+		abortError(c, http.StatusBadRequest, "Unknown ID")
+		return
+	}
+	user := models.GetUserById(id)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"user":    user,
+	})
+}
+
 func UpdateProfile(c *gin.Context) {
 	var user models.User
 
