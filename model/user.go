@@ -25,7 +25,7 @@ type User struct {
 	Comments           []Comment   `json:"-"`
 	Replies            []Reply     `json:"-"`
 	PostLikes          []PostLike  `json:"-"`
-	Connections        []*User     `gorm:"many2many:user_connections"`
+	Connections        []*User     `gorm:"many2many:user_connections" json:"connections"`
 	Eudcations         []Education `json:"-"`
 }
 
