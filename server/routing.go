@@ -20,8 +20,9 @@ func Routes(router *gin.Engine) {
 		api.POST("/user/profile/update", controllers.UpdateProfile)
 		api.POST("/user/profile/image", controllers.UploadProfilePicture)
 		api.POST("/user/invite", controller.InviteUser)
+		api.POST("/user/invite/accept", controller.AcceptInvite)
+		api.POST("/user/invite/ignore", controller.IgnoreInvite)
 		api.GET("/user/connection", controller.UserConnections)
-		api.GET("/user/connection/add", controller.ConnectUser)
 
 		api.GET("/home/post", controllers.GetPosts)
 		api.POST("/home/post/add", controllers.AddPost)

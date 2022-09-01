@@ -32,3 +32,7 @@ func CreateInvitation(source *User, destination *User, note string) (Invitation,
 
 	return invite, err
 }
+
+func DeleteInvitation(sourceId string, destinationId string) error {
+	return utils.DB.Where("source_id = ? AND destination_id = ?", sourceId, destinationId).Delete(&Invitation{}).Error
+}

@@ -182,3 +182,41 @@ func InviteUser(c *gin.Context) {
 		"invitation": invite,
 	})
 }
+
+func IgnoreInvite(c *gin.Context) {
+	sourceId := c.Query("source")
+	destinationId := c.Query("destination")
+
+	err := model.DeleteInvitation(sourceId, destinationId)
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
+
+func AcceptInvite(c *gin.Context) {
+	sourceId := c.Query("source")
+	destinationId := c.Query("destination")
+
+	err := model.DeleteInvitation(sourceId, destinationId)
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	source := model.GetUserById(sourceId)
+	destination := model.GetUserById(destinationId)
+	err = model.CreateConnection(&source, &destination)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
