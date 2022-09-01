@@ -82,6 +82,14 @@ func CreateConnection(user *User, connect *User) error {
 	return err
 }
 
+func DeleteConnection(user *User, connect *User) error {
+	err := utils.DB.Model(user).Association("Connections").Delete(connect)
+	if err == nil {
+		err = utils.DB.Model(connect).Association("Connections").Delete(user)
+	}
+	return err
+}
+
 func GetConnection(user *User) error {
 	return utils.DB.Preload("Connections").Find(user).Error
 }

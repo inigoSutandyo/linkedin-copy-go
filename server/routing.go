@@ -23,6 +23,7 @@ func Routes(router *gin.Engine) {
 		api.POST("/user/invite/accept", controller.AcceptInvite)
 		api.POST("/user/invite/ignore", controller.IgnoreInvite)
 		api.GET("/user/connection", controller.UserConnections)
+		api.DELETE("/user/connection/remove", controller.RemoveConnection)
 
 		api.GET("/user/invitations", controller.GetAllInvitations)
 

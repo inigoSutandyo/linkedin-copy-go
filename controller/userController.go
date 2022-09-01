@@ -216,3 +216,22 @@ func AcceptInvite(c *gin.Context) {
 		"message": "success",
 	})
 }
+
+func RemoveConnection(c *gin.Context) {
+	userId := c.Query("user")
+	connectId := c.Query("connect")
+
+	user := model.GetUserById(userId)
+	connect := model.GetUserById(connectId)
+
+	err := model.DeleteConnection(&user, &connect)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
