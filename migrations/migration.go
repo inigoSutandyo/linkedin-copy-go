@@ -13,6 +13,7 @@ func Migrate() {
 	// utils.DB.Migrator().DropColumn(&models.Post{}, "FileMime")
 	// utils.DB.Migrator().DropColumn(&models.Post{}, "File")
 	// utils.DB.Migrator().DropTable(&models.Invitation{})
+	utils.DB.Migrator().DropConstraint(&models.User{}, "idx_users_phone")
 	utils.DB.AutoMigrate(
 		&models.User{},
 		&models.Post{},

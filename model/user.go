@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"time"
 
 	utils "github.com/inigoSutandyo/linkedin-copy-go/utils"
@@ -15,7 +14,7 @@ type User struct {
 	Headline           string       `json:"headline"`
 	FirstName          string       `json:"firstname"`
 	LastName           string       `json:"lastname"`
-	Phone              string       `json:"phone" gorm:"unique"`
+	Phone              string       `json:"phone"`
 	ImageURL           string       `json:"imageurl"`
 	ImagePublicID      string       `json:"imageid"`
 	BackgroundURL      string       `json:"backgroundurl"`
@@ -41,7 +40,6 @@ func GetUserByEmail(email string) User {
 
 	var user User
 	utils.DB.Raw("SELECT id, email, password FROM users WHERE email = ?", email).Scan(&user)
-	fmt.Println(user)
 	return user
 }
 

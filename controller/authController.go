@@ -95,6 +95,11 @@ func Register(c *gin.Context) {
 		})
 		return
 	}
+	user := models.GetUserByEmail(email)
+	if user.ID != 0 {
+		abortError(c, http.StatusBadRequest, "Email already registerd")
+		return
+	}
 
 	pw, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
 	_, err := models.CreateUser(email, pw)
