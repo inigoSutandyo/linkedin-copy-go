@@ -24,6 +24,8 @@ func Routes(router *gin.Engine) {
 		api.POST("/user/invite/ignore", controller.IgnoreInvite)
 		api.GET("/user/connection", controller.UserConnections)
 
+		api.GET("/user/invitations", controller.GetAllInvitations)
+
 		api.GET("/home/post", controllers.GetPosts)
 		api.POST("/home/post/add", controllers.AddPost)
 		api.POST("/home/post/file", controllers.UploadFilePost)

@@ -8,10 +8,10 @@ import (
 type Invitation struct {
 	gorm.Model
 	Note          string `json:"note"`
-	SourceID      uint
-	Source        User `json:"source"`
-	DestinationID uint
-	Destination   User
+	SourceID      uint   `json:"sourceid"`
+	Source        User   `json:"source"`
+	DestinationID uint   `json:"destinationid"`
+	Destination   User   `json:"destination"`
 }
 
 func CreateInvitation(source *User, destination *User, note string) (Invitation, error) {
@@ -35,4 +35,10 @@ func CreateInvitation(source *User, destination *User, note string) (Invitation,
 
 func DeleteInvitation(sourceId string, destinationId string) error {
 	return utils.DB.Where("source_id = ? AND destination_id = ?", sourceId, destinationId).Delete(&Invitation{}).Error
+}
+
+func GetAllInvitations() []Invitation {
+	var invitations []Invitation
+	utils.DB.Find(&invitations)
+	return invitations
 }

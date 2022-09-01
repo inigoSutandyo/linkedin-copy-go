@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +28,6 @@ func GetUser(c *gin.Context) {
 	var id string
 	id = getUserID(c)
 
-	fmt.Println("ID = " + id)
 	user = models.GetUserById(id)
 	models.GetConnection(&user)
 	model.GetInvitations(&user)
@@ -86,8 +84,6 @@ func UpdateProfile(c *gin.Context) {
 	}
 
 	models.UpdateUser(&user, "password, email, id", updateUser)
-	fmt.Print("USER = ")
-	fmt.Println(user.ID)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
