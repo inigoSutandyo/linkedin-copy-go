@@ -31,20 +31,10 @@ func AddComment(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, dbErr.Error())
 	}
 
-	// AddReplyDebug(&comment, &user)
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
 		"comment": comment,
 	})
-}
-
-func AddReplyDebug(comment *model.Comment, user *model.User) {
-	var reply = model.Reply{
-		Content:   "<p>Testing</p>",
-		CommentID: comment.ID,
-	}
-	model.CreateReply(user, comment, &reply)
 }
 
 func GetComments(c *gin.Context) {

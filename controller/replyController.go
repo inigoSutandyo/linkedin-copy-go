@@ -8,11 +8,12 @@ import (
 )
 
 func AddReply(c *gin.Context) {
-	var reply model.Reply
+	var reply model.Comment
+	commentId := c.Query("id")
 	c.BindJSON(&reply)
 
 	reply.Content = sanitizeHtml(reply.Content)
-	comment, err := model.GetCommentById(reply.CommentID)
+	comment, err := model.GetCommentById(commentId)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -33,13 +34,9 @@ func AddReply(c *gin.Context) {
 }
 
 func GetReplies(c *gin.Context) {
-	var replies []model.Reply
+	var replies []model.Comment
 	id_str, _ := c.GetQuery("id")
-	comment_id, convErr := toUint(id_str)
-	if convErr != nil {
-		abortError(c, http.StatusInternalServerError, convErr.Error())
-	}
-	comment, err := model.GetCommentById(comment_id)
+	comment, err := model.GetCommentById(id_str)
 
 	model.GetRepliesForComments(&comment, &replies)
 	if err != nil {

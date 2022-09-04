@@ -21,8 +21,6 @@ type User struct {
 	BackgroundPublicID string       `json:"backgroundid"`
 	Dob                time.Time    `json:"dob"`
 	Posts              []Post       `json:"-"`
-	Comments           []Comment    `json:"-"`
-	Replies            []Reply      `json:"-"`
 	PostLikes          []PostLike   `json:"-"`
 	Connections        []*User      `gorm:"many2many:user_connections" json:"connections"`
 	Educations         []Education  `json:"-"`
