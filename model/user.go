@@ -98,3 +98,11 @@ func GetInvitations(user *User) {
 	utils.DB.Preload("Source").Find(&invitations, "destination_id = ?", user.ID)
 	user.Invitations = invitations
 }
+
+func AddEducation(user *User, education *Education) {
+	utils.DB.Model(user).Association("Educations").Append(education)
+}
+
+func GetEducations(user *User, education *Education) {
+	utils.DB.Model(user).Association("Educations").Find(education)
+}

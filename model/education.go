@@ -8,7 +8,8 @@ import (
 
 type Education struct {
 	gorm.Model
-	Name      string    `json:"name"`
+	Institute string    `json:"institute"`
+	Degree    string    `json:"degree"`
 	StartTime time.Time `json:"start"`
 	EndTime   time.Time `json:"end"`
 	UserID    uint      `json:"-"`
