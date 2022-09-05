@@ -10,6 +10,8 @@ import (
 func AddReply(c *gin.Context) {
 	var reply model.Comment
 	commentId := c.Query("id")
+	mentionId, _ := toUint(c.Query("mention"))
+
 	c.BindJSON(&reply)
 
 	reply.Content = sanitizeHtml(reply.Content)
@@ -17,10 +19,11 @@ func AddReply(c *gin.Context) {
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 	id := getUserID(c)
 	user := model.GetUserById(id)
-	dbErr := model.CreateReply(&user, &comment, &reply)
+	dbErr := model.CreateReply(&user, &comment, &reply, mentionId)
 
 	if dbErr != nil {
 		abortError(c, http.StatusInternalServerError, dbErr.Error())
@@ -41,6 +44,7 @@ func GetReplies(c *gin.Context) {
 	model.GetRepliesForComments(&comment, &replies)
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

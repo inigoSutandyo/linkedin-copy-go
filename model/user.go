@@ -26,6 +26,7 @@ type User struct {
 	Educations         []Education  `json:"-"`
 	Invitations        []Invitation `gorm:"foreignKey:DestinationID" json:"invitations"`
 	SourceInvitations  []Invitation `gorm:"foreignKey:SourceID" json:"-"`
+	Mentions           []Comment    `gorm:"foreignKey:MentionID"`
 }
 
 func GetUserById(id string) User {

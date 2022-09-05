@@ -25,6 +25,7 @@ func AddPost(c *gin.Context) {
 		fmt.Print("ERROR = ")
 		fmt.Println(dbErr.Error())
 		abortError(c, http.StatusInternalServerError, dbErr.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -63,6 +64,7 @@ func GetPosts(c *gin.Context) {
 	err := model.GetPostsInRange(&posts, &users, int(offset_int), int(limit_int))
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 	// fmt.Println(posts[0])
 	var hasMore bool
@@ -99,6 +101,7 @@ func AddLikePost(c *gin.Context) {
 	postLike, _ := model.GetPostLike(user.ID, post_id)
 	if postLike.ID > 0 {
 		abortError(c, http.StatusBadRequest, "Already Liked")
+		return
 	}
 
 	err3 := model.CreatePostLike(&user, &post)
@@ -123,6 +126,7 @@ func RemoveLikePost(c *gin.Context) {
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "success",

@@ -29,6 +29,7 @@ func AddComment(c *gin.Context) {
 
 	if dbErr != nil {
 		abortError(c, http.StatusInternalServerError, dbErr.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -44,6 +45,7 @@ func GetComments(c *gin.Context) {
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
