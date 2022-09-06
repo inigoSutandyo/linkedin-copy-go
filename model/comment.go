@@ -23,7 +23,7 @@ type Comment struct {
 func CreateComment(user *User, post *Post, comment *Comment) error {
 	comment.UserID = user.ID
 	comment.User = *user
-	err := utils.DB.Model(post).Association("Comments").Append(comment)
+	err := utils.DB.Preload("Mention").Model(post).Association("Comments").Append(comment)
 	return err
 }
 

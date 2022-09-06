@@ -23,7 +23,8 @@ type User struct {
 	Posts              []Post       `json:"-"`
 	PostLikes          []PostLike   `json:"-"`
 	Connections        []*User      `gorm:"many2many:user_connections" json:"connections"`
-	Educations         []Education  `json:"-"`
+	Educations         []Education  `json:"educations"`
+	Experiences        []Experience `json:"experiences"`
 	Invitations        []Invitation `gorm:"foreignKey:DestinationID" json:"invitations"`
 	SourceInvitations  []Invitation `gorm:"foreignKey:SourceID" json:"-"`
 	Mentions           []Comment    `gorm:"foreignKey:MentionID"`
@@ -103,6 +104,18 @@ func AddEducation(user *User, education *Education) {
 	utils.DB.Model(user).Association("Educations").Append(education)
 }
 
-func GetEducations(user *User, education *Education) {
-	utils.DB.Model(user).Association("Educations").Find(education)
+func GetEducations(user *User) {
+	var educations []Education
+	utils.DB.Model(user).Association("Educations").Find(&educations)
+	user.Educations = educations
+}
+
+func AddExperience(user *User, experience *Experience) {
+	utils.DB.Model(user).Association("Experiences").Append(experience)
+}
+
+func GetExperiences(user *User) {
+	var experience []Experience
+	utils.DB.Model(user).Association("Experiences").Find(&experience)
+	user.Experiences = experience
 }

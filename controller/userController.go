@@ -23,14 +23,13 @@ func getUserID(c *gin.Context) string {
 }
 
 func GetUser(c *gin.Context) {
-
 	var user models.User
 	var id string
 	id = getUserID(c)
-
 	user = models.GetUserById(id)
 	models.GetConnection(&user)
 	model.GetInvitations(&user)
+	model.GetEducations(&user)
 
 	likedPost, err := models.GetLikedPostData(&user)
 
@@ -49,7 +48,6 @@ func GetUser(c *gin.Context) {
 		"user":       user,
 		"message":    "success",
 		"likedposts": postIds,
-		// "invites":    invites,
 	})
 
 }
