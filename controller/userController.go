@@ -235,3 +235,21 @@ func RemoveConnection(c *gin.Context) {
 		"message": "success",
 	})
 }
+
+func AddEducation(c *gin.Context) {
+	var education model.Education
+	c.BindJSON(&education)
+	id := getUserID(c)
+	if id == "" {
+		abortError(c, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	user := model.GetUserById(id)
+	model.AddEducation(&user, &education)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":   "success",
+		"education": education,
+	})
+}

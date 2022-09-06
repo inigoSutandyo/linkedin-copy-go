@@ -19,13 +19,16 @@ func Routes(router *gin.Engine) {
 		api.GET("/user/otherprofile", controllers.GetOtherUser)
 		api.POST("/user/profile/update", controllers.UpdateProfile)
 		api.POST("/user/profile/image", controllers.UploadProfilePicture)
+
+		api.GET("/user/invitations", controller.GetAllInvitations)
 		api.POST("/user/invite", controller.InviteUser)
 		api.POST("/user/invite/accept", controller.AcceptInvite)
 		api.POST("/user/invite/ignore", controller.IgnoreInvite)
+
 		api.GET("/user/connection", controller.UserConnections)
 		api.DELETE("/user/connection/remove", controller.RemoveConnection)
 
-		api.GET("/user/invitations", controller.GetAllInvitations)
+		api.POST("/user/educations/add", controller.AddEducation)
 
 		api.GET("/home/post", controllers.GetPosts)
 		api.POST("/home/post/add", controllers.AddPost)
