@@ -29,6 +29,7 @@ func Routes(router *gin.Engine) {
 		api.DELETE("/user/connection/remove", controller.RemoveConnection)
 
 		api.POST("/user/educations/add", controller.AddEducation)
+		api.POST("/user/experiences/add", controller.AddExperience)
 
 		api.GET("/home/post", controllers.GetPosts)
 		api.POST("/home/post/add", controllers.AddPost)

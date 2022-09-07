@@ -100,8 +100,8 @@ func GetInvitations(user *User) {
 	user.Invitations = invitations
 }
 
-func AddEducation(user *User, education *Education) {
-	utils.DB.Model(user).Association("Educations").Append(education)
+func AppendEducation(user *User, education *Education) {
+	utils.DB.Model(user).Order("educations.created_at desc").Association("Educations").Append(education)
 }
 
 func GetEducations(user *User) {
@@ -110,12 +110,12 @@ func GetEducations(user *User) {
 	user.Educations = educations
 }
 
-func AddExperience(user *User, experience *Experience) {
+func AppendExperience(user *User, experience *Experience) {
 	utils.DB.Model(user).Association("Experiences").Append(experience)
 }
 
 func GetExperiences(user *User) {
 	var experience []Experience
-	utils.DB.Model(user).Association("Experiences").Find(&experience)
+	utils.DB.Model(user).Order("experiences.created_at desc").Association("Experiences").Find(&experience)
 	user.Experiences = experience
 }

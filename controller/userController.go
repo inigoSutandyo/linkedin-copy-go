@@ -30,6 +30,7 @@ func GetUser(c *gin.Context) {
 	models.GetConnection(&user)
 	model.GetInvitations(&user)
 	model.GetEducations(&user)
+	model.GetExperiences(&user)
 
 	likedPost, err := models.GetLikedPostData(&user)
 
@@ -244,10 +245,28 @@ func AddEducation(c *gin.Context) {
 	}
 
 	user := model.GetUserById(id)
-	model.AddEducation(&user, &education)
+	model.AppendEducation(&user, &education)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":   "success",
 		"education": education,
+	})
+}
+
+func AddExperience(c *gin.Context) {
+	var experience model.Experience
+	c.BindJSON(&experience)
+	id := getUserID(c)
+	if id == "" {
+		abortError(c, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	user := model.GetUserById(id)
+	model.AppendExperience(&user, &experience)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":   "success",
+		"education": experience,
 	})
 }

@@ -13,5 +13,6 @@ func Migrate() {
 		&models.PostLike{},
 		&models.Invitation{},
 		&models.Education{},
+		&models.Experience{},
 	)
 }
