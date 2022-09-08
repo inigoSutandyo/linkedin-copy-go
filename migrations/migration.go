@@ -14,5 +14,6 @@ func Migrate() {
 		&models.Invitation{},
 		&models.Education{},
 		&models.Experience{},
+		&models.Notification{},
 	)
 }

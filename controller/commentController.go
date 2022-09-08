@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +20,7 @@ func AddComment(c *gin.Context) {
 			"message": err.Error(),
 		})
 	}
-	fmt.Println(post.ID)
+
 	id := getUserID(c)
 	user := model.GetUserById(id)
 
@@ -31,6 +30,12 @@ func AddComment(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, dbErr.Error())
 		return
 	}
+	var notification = model.Notification{
+		Message:   " commented on your post",
+		HasSource: true,
+	}
+
+	model.CreateNotificationForPost(&post.User, &user, &notification, &post)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",

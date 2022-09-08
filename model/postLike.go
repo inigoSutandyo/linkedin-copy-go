@@ -17,6 +17,7 @@ func CreatePostLike(user *User, post *Post) error {
 	var postLike PostLike
 	postLike.UserID = user.ID
 	postLike.PostID = post.ID
+	
 	err := utils.DB.Model(post).Association("PostLikes").Append(&postLike)
 	err2 := utils.DB.Model(user).Association("PostLikes").Append(&postLike)
 	getPostLikeCount(post)

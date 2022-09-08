@@ -109,7 +109,11 @@ func AddLikePost(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, err3.Error())
 		return
 	}
-
+	var notification = model.Notification{
+		Message:   " liked your post",
+		HasSource: true,
+	}
+	model.CreateNotificationForPost(&post.User, &user, &notification, &post)
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "success",
 		"likepost": post_id,
