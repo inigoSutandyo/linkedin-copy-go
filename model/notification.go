@@ -103,3 +103,17 @@ func isSameNotif(notification *Notification, userId uint, fromId uint, notifType
 	}
 	return false
 }
+
+func GetNotifications(id string, notifications *[]Notification) error {
+	return utils.DB.Preload("From").Preload("Post").Preload("Comment").Find(&notifications, "user_id = ?", id).Error
+}
+
+func DeleteNotification(id string) error {
+	var notif Notification
+	err := utils.DB.Find(&notif, "id = ?", id).Error
+	if err == nil {
+		err = utils.DB.Delete(&notif).Error
+	}
+
+	return err
+}

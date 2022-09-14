@@ -45,5 +45,8 @@ func Routes(router *gin.Engine) {
 
 		api.GET("/search", controllers.Search)
 
+		api.GET("/notifications", controller.UserNotifications)
+		api.DELETE("/notifications/remove", controller.RemoveNotification)
+
 	}
 }
