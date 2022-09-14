@@ -80,6 +80,26 @@ func GetPosts(c *gin.Context) {
 	})
 }
 
+func RemovePost(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		abortError(c, http.StatusBadRequest, "Bad Request")
+		return
+	}
+
+	err := model.DeletePost(id)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "success",
+	})
+
+}
+
 func AddLikePost(c *gin.Context) {
 	id := getUserID(c)
 	user := model.GetUserById(id)

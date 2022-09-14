@@ -36,6 +36,7 @@ func Routes(router *gin.Engine) {
 		api.POST("/home/post/file", controllers.UploadFilePost)
 		api.POST("/home/post/like", controllers.AddLikePost)
 		api.POST("/home/post/dislike", controllers.RemoveLikePost)
+		api.DELETE("/home/post/remove", controllers.RemovePost)
 
 		api.GET("/home/post/comment", controllers.GetComments)
 		api.POST("/home/post/comment/add", controllers.AddComment)
