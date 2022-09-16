@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
@@ -41,7 +42,10 @@ func GetReplies(c *gin.Context) {
 	id_str, _ := c.GetQuery("id")
 	comment, err := model.GetCommentById(id_str)
 
-	model.GetRepliesForComments(&comment, &replies)
+	offset, _ := strconv.ParseInt(c.Query("offset"), 10, 32)
+	limit, _ := strconv.ParseInt(c.Query("limit"), 10, 32)
+
+	model.GetRepliesForCommentsWithRange(&comment, &replies, int(offset), int(limit))
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		return

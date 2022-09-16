@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
@@ -45,8 +46,13 @@ func AddComment(c *gin.Context) {
 
 func GetComments(c *gin.Context) {
 	post_id, _ := c.GetQuery("id")
+	offset, _ := strconv.ParseInt(c.Query("offset"), 10, 32)
+	limit, _ := strconv.ParseInt(c.Query("limit"), 10, 32)
+
 	var comments []model.Comment
-	err := model.GetCommentByPost(post_id, &comments)
+	var err error
+
+	err = model.GetCommentByPostWithRange(post_id, &comments, int(offset), int(limit))
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -57,4 +63,5 @@ func GetComments(c *gin.Context) {
 		"message":  "success",
 		"comments": comments,
 	})
+
 }

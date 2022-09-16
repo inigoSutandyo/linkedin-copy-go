@@ -32,6 +32,11 @@ func GetCommentByPost(id string, comments *[]Comment) error {
 	return err
 }
 
+func GetCommentByPostWithRange(id string, comments *[]Comment, offset int, limit int) error {
+	err := utils.DB.Joins("User").Joins("Post").Limit(limit).Offset(offset).Find(comments, "comments.post_id = ? AND comments.is_reply = false", id).Error
+	return err
+}
+
 func GetCommentById(id string) (Comment, error) {
 	var comment Comment
 	err := utils.DB.First(&comment, id).Error
@@ -40,6 +45,10 @@ func GetCommentById(id string) (Comment, error) {
 
 func GetRepliesForComments(comment *Comment, replies *[]Comment) {
 	utils.DB.Preload("Mention").Preload("User").Model(comment).Association("Replies").Find(replies, "comments.is_reply = true")
+}
+
+func GetRepliesForCommentsWithRange(comment *Comment, replies *[]Comment, offset int, limit int) {
+	utils.DB.Preload("Mention").Preload("User").Model(comment).Limit(limit).Offset(offset).Association("Replies").Find(replies, "comments.is_reply = true")
 }
 
 func CreateReply(user *User, comment *Comment, reply *Comment, mentionId uint) error {
