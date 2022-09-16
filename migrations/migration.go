@@ -15,5 +15,6 @@ func Migrate() {
 		&models.Education{},
 		&models.Experience{},
 		&models.Notification{},
+		&models.Job{},
 	)
 }
