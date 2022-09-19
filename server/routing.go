@@ -3,22 +3,26 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/controller"
-	controllers "github.com/inigoSutandyo/linkedin-copy-go/controller"
+	ws "github.com/inigoSutandyo/linkedin-copy-go/websocket"
 )
 
 func Routes(router *gin.Engine) {
+
+	pool := ws.NewPool()
+
+	go pool.Start()
+
 	api := router.Group("/api")
 	{
+		api.GET("/auth/isauth", controller.ClientAuth)
+		api.POST("/auth/register", controller.Register)
+		api.POST("/auth/login", controller.Login)
+		api.POST("/auth/logout", controller.Logout)
 
-		api.GET("/auth/isauth", controllers.ClientAuth)
-		api.POST("/auth/register", controllers.Register)
-		api.POST("/auth/login", controllers.Login)
-		api.POST("/auth/logout", controllers.Logout)
-
-		api.GET("/user/profile", controllers.GetUser)
-		api.GET("/user/otherprofile", controllers.GetOtherUser)
-		api.POST("/user/profile/update", controllers.UpdateProfile)
-		api.POST("/user/profile/image", controllers.UploadProfilePicture)
+		api.GET("/user/profile", controller.GetUser)
+		api.GET("/user/otherprofile", controller.GetOtherUser)
+		api.POST("/user/profile/update", controller.UpdateProfile)
+		api.POST("/user/profile/image", controller.UploadProfilePicture)
 
 		api.GET("/user/invitations", controller.GetAllInvitations)
 		api.POST("/user/invite", controller.InviteUser)
@@ -31,20 +35,20 @@ func Routes(router *gin.Engine) {
 		api.POST("/user/educations/add", controller.AddEducation)
 		api.POST("/user/experiences/add", controller.AddExperience)
 
-		api.GET("/home/post", controllers.GetPosts)
-		api.POST("/home/post/add", controllers.AddPost)
-		api.POST("/home/post/file", controllers.UploadFilePost)
-		api.POST("/home/post/like", controllers.AddLikePost)
-		api.POST("/home/post/dislike", controllers.RemoveLikePost)
-		api.DELETE("/home/post/remove", controllers.RemovePost)
+		api.GET("/home/post", controller.GetPosts)
+		api.POST("/home/post/add", controller.AddPost)
+		api.POST("/home/post/file", controller.UploadFilePost)
+		api.POST("/home/post/like", controller.AddLikePost)
+		api.POST("/home/post/dislike", controller.RemoveLikePost)
+		api.DELETE("/home/post/remove", controller.RemovePost)
 
-		api.GET("/home/post/comment", controllers.GetComments)
-		api.POST("/home/post/comment/add", controllers.AddComment)
+		api.GET("/home/post/comment", controller.GetComments)
+		api.POST("/home/post/comment/add", controller.AddComment)
 
-		api.POST("/home/post/comment/reply/add", controllers.AddReply)
-		api.GET("/home/post/comment/reply", controllers.GetReplies)
+		api.POST("/home/post/comment/reply/add", controller.AddReply)
+		api.GET("/home/post/comment/reply", controller.GetReplies)
 
-		api.GET("/search", controllers.Search)
+		api.GET("/search", controller.Search)
 
 		api.GET("/notifications", controller.UserNotifications)
 		api.DELETE("/notifications/remove", controller.RemoveNotification)
@@ -52,5 +56,6 @@ func Routes(router *gin.Engine) {
 		api.GET("/jobs", controller.GetAllJobs)
 		api.POST("/jobs/add", controller.AddJob)
 
+		api.GET("/websocket", controller.ServeWebsocket(pool))
 	}
 }
