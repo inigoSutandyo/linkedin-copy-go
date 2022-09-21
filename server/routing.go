@@ -56,6 +56,10 @@ func Routes(router *gin.Engine) {
 		api.GET("/jobs", controller.GetAllJobs)
 		api.POST("/jobs/add", controller.AddJob)
 
-		api.GET("/websocket", controller.ServeWebsocket(pool))
+		// api.GET("/websocket", controller.ServeWebsocket(pool))
+		api.GET("/chats", controller.GetChatRooms)
+		api.POST("/chats/create", controller.CreateNewChat)
+		api.POST("/message/add", controller.AddMessage)
+		api.GET("/message", controller.GetMessageByChat)
 	}
 }

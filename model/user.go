@@ -28,6 +28,7 @@ type User struct {
 	Invitations        []Invitation `gorm:"foreignKey:DestinationID" json:"invitations"`
 	SourceInvitations  []Invitation `gorm:"foreignKey:SourceID" json:"-"`
 	Mentions           []Comment    `gorm:"foreignKey:MentionID"`
+	Chats              []*Chat      `gorm:"many2many:user_chats;"`
 }
 
 func GetUserById(id string) User {

@@ -16,5 +16,7 @@ func Migrate() {
 		&models.Experience{},
 		&models.Notification{},
 		&models.Job{},
+		&models.Message{},
+		&models.Chat{},
 	)
 }
