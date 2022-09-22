@@ -13,7 +13,7 @@ import (
 func ServeWebsocket(pool *ws.Pool) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-
+		id, _ := toUint(c.Query("id"))
 		conn, err := websocket.Upgrade(c.Writer, c.Request)
 
 		if err != nil {
@@ -22,12 +22,15 @@ func ServeWebsocket(pool *ws.Pool) gin.HandlerFunc {
 		}
 
 		client := &ws.Client{
-			Conn: conn,
-			Pool: pool,
+			Conn:   conn,
+			Pool:   pool,
+			ChatID: id,
 		}
 
 		pool.Register <- client
 		client.Read()
+		// go websocket.Writer(conn)
+		// websocket.Reader(conn)
 	}
 }
 
