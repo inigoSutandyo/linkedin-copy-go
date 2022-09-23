@@ -47,11 +47,15 @@ func GetRoomById(id uint) Chat {
 	return chat
 }
 
-func CreateMessage(chat *Chat, user *User, message *Message) error {
-	message.User = *user
+func CreateMessage(chat_id uint, user_id string, message *Message) Message {
+	user := GetUserById(user_id)
+	chat := GetRoomById(chat_id)
+
+	message.User = user
 	message.UserID = user.ID
-	message.Chat = *chat
-	return utils.DB.Model(chat).Association("Messages").Append(message)
+	message.Chat = chat
+	utils.DB.Model(&chat).Association("Messages").Append(message)
+	return *message
 }
 
 func GetMessage(chat *Chat) []Message {

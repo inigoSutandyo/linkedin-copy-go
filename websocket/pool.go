@@ -1,10 +1,14 @@
 package ws
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/inigoSutandyo/linkedin-copy-go/model"
+)
 
 type Broadcast struct {
 	ChatID  uint
-	Content Message
+	Message model.Message
 }
 
 type Pool struct {
@@ -46,12 +50,19 @@ func (pool *Pool) Start() {
 
 		case broadcast := <-pool.Broadcast:
 			fmt.Println("Sending message to all clients in Pool")
+			send := make(map[uint]int)
 			for client := range pool.Clients {
 				if client.ChatID != broadcast.ChatID {
 					continue
 				}
+				flag := send[client.UserID]
 
-				if err := client.Conn.WriteJSON(broadcast.Content); err != nil {
+				if flag == 1 {
+					continue
+				}
+				send[client.UserID] = 1
+				fmt.Println(client.UserID)
+				if err := client.Conn.WriteJSON(broadcast.Message); err != nil {
 					fmt.Println(err)
 					return
 				}

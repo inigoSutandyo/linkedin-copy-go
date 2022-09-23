@@ -14,6 +14,7 @@ func ServeWebsocket(pool *ws.Pool) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		id, _ := toUint(c.Query("id"))
+		user_id, _ := toUint(c.Query("user"))
 		conn, err := websocket.Upgrade(c.Writer, c.Request)
 
 		if err != nil {
@@ -25,6 +26,7 @@ func ServeWebsocket(pool *ws.Pool) gin.HandlerFunc {
 			Conn:   conn,
 			Pool:   pool,
 			ChatID: id,
+			UserID: user_id,
 		}
 
 		pool.Register <- client
@@ -75,15 +77,12 @@ func AddMessage(c *gin.Context) {
 	var message model.Message
 	c.BindJSON(&message)
 
-	user := model.GetUserById(id)
-	chat := model.GetRoomById(message.ChatID)
+	model.CreateMessage(message.ChatID, id, &message)
 
-	err := model.CreateMessage(&chat, &user, &message)
-
-	if err != nil {
-		abortError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
+	// if err != nil {
+	// 	abortError(c, http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
 
 	c.JSON(200, gin.H{
 		"message":      "success",
