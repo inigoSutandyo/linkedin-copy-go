@@ -61,5 +61,7 @@ func Routes(router *gin.Engine) {
 		api.POST("/chats/create", controller.CreateNewChat)
 		api.POST("/message/add", controller.AddMessage)
 		api.GET("/message", controller.GetMessageByChat)
+
+		api.GET("/recommendation", controller.FindRecommendation)
 	}
 }

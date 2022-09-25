@@ -270,3 +270,44 @@ func AddExperience(c *gin.Context) {
 		"education": experience,
 	})
 }
+
+func FindRecommendation(c *gin.Context) {
+	id := getUserID(c)
+	user := model.GetUserById(id)
+	err := model.GetConnection(&user)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var recommendations []model.User
+	id_list := make(map[uint]int)
+	id_list[user.ID] = 1
+
+	for _, u := range user.Connections {
+		id_list[u.ID] = 1
+	}
+
+	for _, u := range user.Connections {
+		err := model.GetConnection(u)
+
+		if err != nil {
+			abortError(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		for _, c := range u.Connections {
+			if id_list[c.ID] == 0 {
+				recommendations = append(recommendations, *c)
+			}
+			id_list[c.ID] = 1
+		}
+	}
+
+	c.JSON(200, gin.H{
+		"message":         "success",
+		"recommendations": recommendations,
+	})
+
+}
