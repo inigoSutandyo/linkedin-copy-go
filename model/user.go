@@ -105,11 +105,11 @@ func GetConnection(user *User) error {
 }
 
 func CreateFollowing(user *User, follower *User) error {
-	return utils.DB.Model(follower).Association("Followings").Append(user)
+	return utils.DB.Model(user).Association("Followings").Append(follower)
 }
 
 func DeleteFollowing(user *User, follower *User) error {
-	return utils.DB.Model(follower).Association("Followings").Delete(user)
+	return utils.DB.Model(user).Association("Followings").Delete(follower)
 }
 
 func GetFollowing(user *User) error {
