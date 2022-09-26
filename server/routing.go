@@ -63,5 +63,8 @@ func Routes(router *gin.Engine) {
 		api.GET("/message", controller.GetMessageByChat)
 
 		api.GET("/recommendation", controller.FindRecommendation)
+
+		api.POST("/user/follow", controller.FollowUser)
+		api.DELETE("/user/unfollow", controller.UnfollowUser)
 	}
 }

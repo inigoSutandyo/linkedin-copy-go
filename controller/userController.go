@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"github.com/inigoSutandyo/linkedin-copy-go/model"
-	models "github.com/inigoSutandyo/linkedin-copy-go/model"
 )
 
 func getUserID(c *gin.Context) string {
@@ -23,16 +22,17 @@ func getUserID(c *gin.Context) string {
 }
 
 func GetUser(c *gin.Context) {
-	var user models.User
+	var user model.User
 	var id string
 	id = getUserID(c)
-	user = models.GetUserById(id)
-	models.GetConnection(&user)
+	user = model.GetUserById(id)
+	model.GetConnection(&user)
+	model.GetFollowing(&user)
 	model.GetInvitations(&user)
 	model.GetEducations(&user)
 	model.GetExperiences(&user)
 
-	likedPost, err := models.GetLikedPostData(&user)
+	likedPost, err := model.GetLikedPostData(&user)
 
 	var postIds []uint
 
@@ -59,7 +59,7 @@ func GetOtherUser(c *gin.Context) {
 		abortError(c, http.StatusBadRequest, "Unknown ID")
 		return
 	}
-	user := models.GetUserById(id)
+	user := model.GetUserById(id)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
@@ -68,12 +68,12 @@ func GetOtherUser(c *gin.Context) {
 }
 
 func UpdateProfile(c *gin.Context) {
-	var user models.User
+	var user model.User
 
 	id := getUserID(c)
-	user = models.GetUserById(id)
+	user = model.GetUserById(id)
 
-	var updateUser models.User
+	var updateUser model.User
 	bindErr := c.BindJSON(&updateUser)
 
 	if bindErr != nil {
@@ -82,7 +82,7 @@ func UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	models.UpdateUser(&user, "password, email, id", updateUser)
+	model.UpdateUser(&user, "password, email, id", updateUser)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
@@ -96,11 +96,11 @@ func UploadProfilePicture(c *gin.Context) {
 		abortError(c, http.StatusBadRequest, "Not Authorized")
 		return
 	}
-	user := models.GetUserById(id)
+	user := model.GetUserById(id)
 	url := c.Query("url")
 	publicid := c.Query("publicid")
 
-	err := models.UploadImageUser(&user, url, publicid)
+	err := model.UploadImageUser(&user, url, publicid)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -122,10 +122,10 @@ func ConnectUser(c *gin.Context) {
 		return
 	}
 
-	user := models.GetUserById(userId)
-	connect := models.GetUserById(connectId)
+	user := model.GetUserById(userId)
+	connect := model.GetUserById(connectId)
 
-	err := models.CreateConnection(&user, &connect)
+	err := model.CreateConnection(&user, &connect)
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -143,8 +143,8 @@ func UserConnections(c *gin.Context) {
 		return
 	}
 
-	user := models.GetUserById(id)
-	err := models.GetConnection(&user)
+	user := model.GetUserById(id)
+	err := model.GetConnection(&user)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -162,10 +162,10 @@ func InviteUser(c *gin.Context) {
 	destinationId := c.Query("destination")
 	note := c.Query("note")
 
-	source := models.GetUserById(sourceId)
-	destination := models.GetUserById(destinationId)
+	source := model.GetUserById(sourceId)
+	destination := model.GetUserById(destinationId)
 
-	invite, err := models.CreateInvitation(&source, &destination, note)
+	invite, err := model.CreateInvitation(&source, &destination, note)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -310,4 +310,42 @@ func FindRecommendation(c *gin.Context) {
 		"recommendations": recommendations,
 	})
 
+}
+
+func FollowUser(c *gin.Context) {
+	id := getUserID(c)
+	user := model.GetUserById(id)
+
+	follow_id := c.Query("follow")
+	follow := model.GetUserById(follow_id)
+
+	err := model.CreateFollowing(&user, &follow)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "success",
+	})
+}
+
+func UnfollowUser(c *gin.Context) {
+	id := getUserID(c)
+	user := model.GetUserById(id)
+
+	follow_id := c.Query("follow")
+	follow := model.GetUserById(follow_id)
+
+	err := model.DeleteFollowing(&user, &follow)
+
+	if err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "success",
+	})
 }

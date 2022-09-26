@@ -23,6 +23,7 @@ type User struct {
 	Posts              []Post       `json:"-"`
 	PostLikes          []PostLike   `json:"-"`
 	Connections        []*User      `gorm:"many2many:user_connections" json:"connections"`
+	Followings         []*User      `gorm:"many2many:user_followings" json:"followings"`
 	Educations         []Education  `json:"educations"`
 	Experiences        []Experience `json:"experiences"`
 	Invitations        []Invitation `gorm:"foreignKey:DestinationID" json:"invitations"`
@@ -80,6 +81,11 @@ func CreateConnection(user *User, connect *User) error {
 	if err == nil {
 		err = utils.DB.Model(connect).Association("Connections").Append(user)
 	}
+
+	// if err == nil {
+	// 	err = CreateFollower(user, connect)
+	// }
+
 	return err
 }
 
@@ -88,11 +94,26 @@ func DeleteConnection(user *User, connect *User) error {
 	if err == nil {
 		err = utils.DB.Model(connect).Association("Connections").Delete(user)
 	}
+	// if err == nil {
+	// 	err = DeleteFollower(user, connect)
+	// }
 	return err
 }
 
 func GetConnection(user *User) error {
 	return utils.DB.Preload("Connections").Find(user).Error
+}
+
+func CreateFollowing(user *User, follower *User) error {
+	return utils.DB.Model(follower).Association("Followings").Append(user)
+}
+
+func DeleteFollowing(user *User, follower *User) error {
+	return utils.DB.Model(follower).Association("Followings").Delete(user)
+}
+
+func GetFollowing(user *User) error {
+	return utils.DB.Preload("Followings").Find(user).Error
 }
 
 func GetInvitations(user *User) {
