@@ -71,9 +71,12 @@ func UploadImageUser(user *User, url string, publicid string) error {
 	return err
 }
 
-func SearchUserByName(users *[]User, param string) error {
+func SearchUserByName(users *[]User, param string, offset string) error {
 	param = "%" + param + "%"
-	return utils.DB.Raw("SELECT * FROM users WHERE users.first_name ILIKE ? OR users.last_name ILIKE ?", param, param).Scan(users).Error
+	return utils.DB.Raw("SELECT * FROM users WHERE users.first_name ILIKE ? OR users.last_name ILIKE ? OFFSET ? LIMIT 1",
+		param,
+		param,
+		offset).Scan(users).Error
 }
 
 func CreateConnection(user *User, connect *User) error {

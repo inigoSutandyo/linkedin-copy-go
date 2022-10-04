@@ -48,7 +48,8 @@ func Routes(router *gin.Engine) {
 		api.POST("/home/post/comment/reply/add", controller.AddReply)
 		api.GET("/home/post/comment/reply", controller.GetReplies)
 
-		api.GET("/search", controller.Search)
+		api.GET("/search/post", controller.SearchPostHandler)
+		api.GET("/search/user", controller.SearchUserHandler)
 
 		api.GET("/notifications", controller.UserNotifications)
 		api.DELETE("/notifications/remove", controller.RemoveNotification)

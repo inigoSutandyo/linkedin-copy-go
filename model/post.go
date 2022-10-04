@@ -76,11 +76,15 @@ func getPostLikeCountById(id string) {
 	utils.DB.Save(&post)
 }
 
-func SearchPost(posts *[]Post, param string) error {
+func SearchPost(posts *[]Post, param string, offset int) error {
 	param = "%" + param + "%"
+	err := utils.DB.Preload("User").Order("posts.created_at desc").Limit(5).Offset(offset).Find(posts, "posts.content ILIKE ?", param).Error
 
-	// return utils.DB.Preload("User").Raw("SELECT * FROM posts WHERE posts.content LIKE ?", param).Scan(posts).Error
-	return utils.DB.Preload("User").Order("posts.created_at desc").Find(posts, "posts.content ILIKE ?", param).Error
+	for _, post := range *posts {
+		getPostLikeCount(&post)
+	}
+
+	return err
 }
 
 func DeletePost(id string) error {
