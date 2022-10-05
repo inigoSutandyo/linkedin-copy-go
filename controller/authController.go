@@ -31,7 +31,6 @@ func Login(c *gin.Context) {
 	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
 
 	if err != nil {
-
 		message = "User not found"
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": message,

@@ -50,9 +50,13 @@ func GetReplies(c *gin.Context) {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-
+	hasmore := true
+	if len(replies) < int(limit) {
+		hasmore = false
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
 		"replies": replies,
+		"hasmore": hasmore,
 	})
 }
