@@ -158,14 +158,14 @@ func UserConnections(c *gin.Context) {
 }
 
 func InviteUser(c *gin.Context) {
-	sourceId := c.Query("source")
-	destinationId := c.Query("destination")
-	note := c.Query("note")
+	var invitation model.Invitation
 
-	source := model.GetUserById(sourceId)
-	destination := model.GetUserById(destinationId)
+	c.BindJSON(&invitation)
 
-	invite, err := model.CreateInvitation(&source, &destination, note)
+	source := model.GetUserByIdInt(invitation.SourceID)
+	destination := model.GetUserByIdInt(invitation.DestinationID)
+
+	err := model.CreateInvitation(&source, &destination, &invitation)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -174,7 +174,7 @@ func InviteUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":    "success",
-		"invitation": invite,
+		"invitation": invitation,
 	})
 }
 

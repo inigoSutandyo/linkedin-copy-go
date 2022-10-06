@@ -14,23 +14,20 @@ type Invitation struct {
 	Destination   User   `json:"destination"`
 }
 
-func CreateInvitation(source *User, destination *User, note string) (Invitation, error) {
-	invite := Invitation{
-		Note:          note,
-		SourceID:      source.ID,
-		DestinationID: destination.ID,
-	}
-	err := utils.DB.Create(&invite).Error
-	// fmt.Println(invite)
+func CreateInvitation(source *User, destination *User, invitation *Invitation) error {
+	invitation.Destination = *destination
+	invitation.Source = *source
+	err := utils.DB.Create(&invitation).Error
+	// fmt.Println(invitation)
 	if err == nil {
-		err = utils.DB.Model(&source).Association("SourceInvitations").Append(&invite)
+		err = utils.DB.Model(&source).Association("SourceInvitations").Append(&invitation)
 	}
 
 	if err == nil {
-		err = utils.DB.Model(&destination).Association("Invitations").Append(&invite)
+		err = utils.DB.Model(&destination).Association("Invitations").Append(&invitation)
 	}
 
-	return invite, err
+	return err
 }
 
 func DeleteInvitation(sourceId string, destinationId string) error {

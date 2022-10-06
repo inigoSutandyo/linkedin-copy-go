@@ -38,6 +38,12 @@ func GetUserById(id string) User {
 	return user
 }
 
+func GetUserByIdInt(id uint) User {
+	var user User
+	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)
+	return user
+}
+
 func GetUserByEmail(email string) User {
 
 	var user User
