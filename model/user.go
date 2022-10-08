@@ -19,6 +19,7 @@ type User struct {
 	ImagePublicID      string       `json:"imageid"`
 	BackgroundURL      string       `json:"backgroundurl"`
 	BackgroundPublicID string       `json:"backgroundid"`
+	IsGoogle           bool         `json:"is_google"`
 	Dob                time.Time    `json:"dob"`
 	Posts              []Post       `json:"-"`
 	PostLikes          []PostLike   `json:"-"`
@@ -30,6 +31,7 @@ type User struct {
 	SourceInvitations  []Invitation `gorm:"foreignKey:SourceID" json:"-"`
 	Mentions           []Comment    `gorm:"foreignKey:MentionID"`
 	Chats              []*Chat      `gorm:"many2many:user_chats;"`
+	Token              string
 }
 
 func GetUserById(id string) User {
@@ -51,6 +53,15 @@ func GetUserByEmail(email string) User {
 	return user
 }
 
+func GetGoogleUser(email string) User {
+	var user User
+	utils.DB.Raw("SELECT id, email, password FROM users WHERE email = ? AND is_google = true", email).Scan(&user)
+	if user.ID != 0 {
+		user.IsGoogle = true
+	}
+	return user
+}
+
 func CreateUser(email string, password []byte) (User, error) {
 	user := User{
 		Email:    email,
@@ -60,8 +71,27 @@ func CreateUser(email string, password []byte) (User, error) {
 	return user, err
 }
 
+func CreateGoogleUser(email string, firstname string, lastname string, imageurl string) (User, error) {
+	user := User{
+		Email:     email,
+		FirstName: firstname,
+		LastName:  lastname,
+		ImageURL:  imageurl,
+	}
+
+	err := utils.DB.Create(&user).Error
+	err = utils.DB.Model(&user).Updates(map[string]interface{}{"is_google": true}).Error
+	return user, err
+}
+
 func UpdateUser(user *User, omit string, update User) {
 	utils.DB.Model(&user).Omit(omit).Updates(update)
+}
+
+func GetUserFromToken(token string) User {
+	var user User
+	utils.DB.First(&user, "token = ?", token)
+	return user
 }
 
 func GetUserPost(user *User) []Post {

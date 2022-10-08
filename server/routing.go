@@ -17,6 +17,7 @@ func Routes(router *gin.Engine) {
 		api.GET("/auth/isauth", controller.ClientAuth)
 		api.POST("/auth/register", controller.Register)
 		api.POST("/auth/login", controller.Login)
+		api.POST("/auth/google/login", controller.GoogleLogin)
 		api.POST("/auth/logout", controller.Logout)
 
 		api.GET("/user/profile", controller.GetUser)
@@ -24,6 +25,7 @@ func Routes(router *gin.Engine) {
 		api.POST("/user/profile/update", controller.UpdateProfile)
 		api.POST("/user/profile/image", controller.UploadProfilePicture)
 
+		api.GET("/user/email", controller.FindUserByEmail)
 		api.GET("/user/invitations", controller.GetAllInvitations)
 		api.POST("/user/invite", controller.InviteUser)
 		api.POST("/user/invite/accept", controller.AcceptInvite)

@@ -21,6 +21,16 @@ func getUserID(c *gin.Context) string {
 
 }
 
+func FindUserByEmail(c *gin.Context) {
+	email := c.Query("email")
+	user := model.GetUserByEmail(email)
+
+	c.JSON(200, gin.H{
+		"message": "success",
+		"user":    user,
+	})
+}
+
 func GetUser(c *gin.Context) {
 	var user model.User
 	var id string
