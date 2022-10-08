@@ -1,6 +1,9 @@
 package main
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/inigoSutandyo/linkedin-copy-go/migrations"
 	server "github.com/inigoSutandyo/linkedin-copy-go/server"
@@ -8,6 +11,7 @@ import (
 )
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	utils.Connect()      // connect to DB
 	migrations.Migrate() // migrate db
 	router := gin.Default()

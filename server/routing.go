@@ -19,6 +19,8 @@ func Routes(router *gin.Engine) {
 		api.POST("/auth/login", controller.Login)
 		api.POST("/auth/google/login", controller.GoogleLogin)
 		api.POST("/auth/logout", controller.Logout)
+		api.POST("/auth/forget", controller.ForgetRequest)
+		api.POST("/auth/reset", controller.ResetPassword)
 
 		api.GET("/user/profile", controller.GetUser)
 		api.GET("/user/otherprofile", controller.GetOtherUser)

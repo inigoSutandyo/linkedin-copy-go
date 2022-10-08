@@ -32,6 +32,8 @@ type User struct {
 	Mentions           []Comment    `gorm:"foreignKey:MentionID"`
 	Chats              []*Chat      `gorm:"many2many:user_chats;"`
 	Token              string
+	ForgetToken        string
+	ForgetExpire       time.Time
 }
 
 func GetUserById(id string) User {
@@ -59,6 +61,13 @@ func GetGoogleUser(email string) User {
 	if user.ID != 0 {
 		user.IsGoogle = true
 	}
+	return user
+}
+
+func GetUserForgetPassword(token string) User {
+	var user User
+	utils.DB.First(&user, "forget_token = ?", token)
+
 	return user
 }
 

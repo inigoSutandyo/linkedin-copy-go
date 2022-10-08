@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 	models "github.com/inigoSutandyo/linkedin-copy-go/model"
 	"github.com/inigoSutandyo/linkedin-copy-go/utils"
 	"golang.org/x/crypto/bcrypt"
+	gomail "gopkg.in/gomail.v2"
 )
 
 type AuthData struct {
@@ -226,4 +228,81 @@ func ClientAuth(c *gin.Context) {
 		abortError(c, http.StatusUnauthorized, "Unauthorized User!!")
 		return
 	}
+}
+
+func ForgetRequest(c *gin.Context) {
+	email := c.Query("email")
+
+	user := model.GetUserByEmail(email)
+	if user.ID == 0 {
+		abortError(c, http.StatusBadRequest, "Email not registered")
+		return
+	}
+
+	from := utils.GetEnv("GMAIL_EMAIL")
+	password := utils.GetEnv("GMAIL_PASSWORD")
+
+	m := gomail.NewMessage()
+
+	m.SetHeader("From", from)
+	m.SetHeader("To", email)
+
+	expire := time.Now().Add(time.Minute * 30)
+	token := utils.GenerateForgetToken(int(user.ID))
+
+	updateUser := user
+	updateUser.ForgetToken = token
+	updateUser.ForgetExpire = expire
+
+	model.UpdateUser(&user, "password, email, id", updateUser)
+
+	url := utils.GetEnv("CLIENT_URL") + "/reset/" + token
+
+	m.SetHeader("Subject", "Forget password request")
+	m.SetBody("text/plain", "Hello, "+email+" your request to reset password has been accepted. Click the link below to change your password.\n"+url+"\n")
+
+	d := gomail.NewDialer("smtp.gmail.com", 587, from, password)
+
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	if err := d.DialAndSend(m); err != nil {
+		abortError(c, http.StatusInternalServerError, err.Error())
+		fmt.Println(err)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "success",
+	})
+}
+
+type Reset struct {
+	Forget   string `json:"token"`
+	Password string `json:"password"`
+}
+
+func ResetPassword(c *gin.Context) {
+	var reset Reset
+	c.BindJSON(&reset)
+
+	user := model.GetUserForgetPassword(reset.Forget)
+
+	if user.ID == 0 {
+		abortError(c, http.StatusInternalServerError, "User not found...")
+		return
+	}
+
+	if time.Now().After(user.ForgetExpire) {
+		abortError(c, http.StatusInternalServerError, "Token expired")
+		return
+	}
+
+	updateUser := user
+	pw, _ := bcrypt.GenerateFromPassword([]byte(reset.Password), 14)
+	updateUser.Password = pw
+	model.UpdateUser(&user, "email, id", updateUser)
+
+	c.JSON(200, gin.H{
+		"message": "success",
+	})
 }
