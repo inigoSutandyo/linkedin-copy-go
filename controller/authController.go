@@ -152,16 +152,50 @@ func Register(c *gin.Context) {
 	}
 
 	pw, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
-	_, err := models.CreateUser(email, pw)
+	user, err := models.CreateUser(email, pw)
 
 	if err != nil {
-		message = err.Error()
+		abortError(c, http.StatusInternalServerError, err.Error())
 	}
-	fmt.Println(data)
-	fmt.Println(message)
+	token := utils.GenerateVerifToken(user.ID)
+	url := utils.GetEnv("CLIENT_URL") + "/verification/" + token
+
+	updateUser := user
+	updateUser.VerifToken = token
+	updateUser.VerifExpire = time.Now().Add(time.Minute * 30)
+	model.UpdateUser(&user, "password, email. id", updateUser)
+
+	emailMessage := "Hello, " + email + " you have registered to LinkHEdIn. Click the link below to verify your email.\n" + url + "\n"
+	err = createEmail(email, "LinkHEdIn Verification", emailMessage)
+	// fmt.Println(data)
+	// fmt.Println(message)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": message,
+		"message": "success",
+	})
+}
+
+func VerifyUser(c *gin.Context) {
+	token := c.Query("token")
+
+	user := model.GetUserFromVerifToken(token)
+
+	if user.ID == 0 {
+		abortError(c, http.StatusBadRequest, "Token is invalid")
+		return
+	}
+
+	if time.Now().After(user.VerifExpire) {
+		abortError(c, http.StatusBadRequest, "Token has expired")
+		return
+	}
+
+	updateUser := user
+	updateUser.IsVerified = true
+	model.UpdateUser(&user, "email, password, id", updateUser)
+
+	c.JSON(200, gin.H{
+		"message": "success",
 	})
 }
 
@@ -208,7 +242,7 @@ func ClientAuth(c *gin.Context) {
 	if status {
 		cookie, _ := c.Cookie("token")
 		fmt.Println(cookie)
-		user := model.GetUserFromToken(cookie)
+		user := model.GetUserFromAuthToken(cookie)
 
 		if user.ID == 0 {
 			abortError(c, http.StatusUnauthorized, "Unauthorized User Token not found!!")
@@ -239,33 +273,17 @@ func ForgetRequest(c *gin.Context) {
 		return
 	}
 
-	from := utils.GetEnv("GMAIL_EMAIL")
-	password := utils.GetEnv("GMAIL_PASSWORD")
-
-	m := gomail.NewMessage()
-
-	m.SetHeader("From", from)
-	m.SetHeader("To", email)
-
 	expire := time.Now().Add(time.Minute * 30)
-	token := utils.GenerateForgetToken(int(user.ID))
-
+	token := utils.GenerateForgetToken(user.ID)
+	url := utils.GetEnv("CLIENT_URL") + "/reset/" + token
+	emailMessage := "Hello, " + email + " your request to reset password has been accepted. Click the link below to change your password.\n" + url + "\n"
 	updateUser := user
 	updateUser.ForgetToken = token
 	updateUser.ForgetExpire = expire
 
 	model.UpdateUser(&user, "password, email, id", updateUser)
 
-	url := utils.GetEnv("CLIENT_URL") + "/reset/" + token
-
-	m.SetHeader("Subject", "Forget password request")
-	m.SetBody("text/plain", "Hello, "+email+" your request to reset password has been accepted. Click the link below to change your password.\n"+url+"\n")
-
-	d := gomail.NewDialer("smtp.gmail.com", 587, from, password)
-
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-
-	if err := d.DialAndSend(m); err != nil {
+	if err := createEmail(email, "Forget Password Request", emailMessage); err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
 		fmt.Println(err)
 		return
@@ -274,6 +292,24 @@ func ForgetRequest(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "success",
 	})
+}
+
+func createEmail(email string, title string, message string) error {
+	from := utils.GetEnv("GMAIL_EMAIL")
+	password := utils.GetEnv("GMAIL_PASSWORD")
+
+	m := gomail.NewMessage()
+
+	m.SetHeader("From", from)
+	m.SetHeader("To", email)
+
+	m.SetHeader("Subject", title)
+	m.SetBody("text/plain", message)
+
+	d := gomail.NewDialer("smtp.gmail.com", 587, from, password)
+
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	return d.DialAndSend(m)
 }
 
 type Reset struct {

@@ -34,6 +34,9 @@ type User struct {
 	Token              string
 	ForgetToken        string
 	ForgetExpire       time.Time
+	VerifToken         string
+	VerifExpire        time.Time
+	IsVerified         bool
 }
 
 func GetUserById(id string) User {
@@ -97,9 +100,15 @@ func UpdateUser(user *User, omit string, update User) {
 	utils.DB.Model(&user).Omit(omit).Updates(update)
 }
 
-func GetUserFromToken(token string) User {
+func GetUserFromAuthToken(token string) User {
 	var user User
 	utils.DB.First(&user, "token = ?", token)
+	return user
+}
+
+func GetUserFromVerifToken(token string) User {
+	var user User
+	utils.DB.First(&user, "verif_token = ?", token)
 	return user
 }
 
