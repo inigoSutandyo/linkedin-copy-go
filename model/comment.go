@@ -27,6 +27,12 @@ func CreateComment(user *User, post *Post, comment *Comment) error {
 	return err
 }
 
+func GetCommentCount(id string) int64 {
+	var count int64
+	utils.DB.Model(&Comment{}).Where("comments.post_id = ? AND comments.is_reply = false", id).Count(&count)
+	return count
+}
+
 func GetCommentByPost(id string, comments *[]Comment) error {
 	err := utils.DB.Joins("User").Joins("Post").Find(comments, "comments.post_id = ? AND comments.is_reply = false", id).Error
 	return err

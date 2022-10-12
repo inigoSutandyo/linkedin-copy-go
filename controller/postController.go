@@ -73,9 +73,19 @@ func GetPosts(c *gin.Context) {
 	} else {
 		hasMore = true
 	}
+
+	var comment_count []int64
+	for _, post := range posts {
+		id := strconv.FormatUint(uint64(post.ID), 10)
+
+		count := model.GetCommentCount(id)
+		comment_count = append(comment_count, count)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"posts":   posts,
-		"hasmore": hasMore,
+		"posts":         posts,
+		"hasmore":       hasMore,
+		"comment_count": comment_count,
 		// "users": users,
 	})
 }

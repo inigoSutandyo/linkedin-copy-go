@@ -44,6 +44,17 @@ func AddComment(c *gin.Context) {
 	})
 }
 
+func GetCommentCount(c *gin.Context) {
+	post_id, _ := c.GetQuery("id")
+
+	count := model.GetCommentCount(post_id)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"count":   count,
+	})
+
+}
+
 func GetComments(c *gin.Context) {
 	post_id, _ := c.GetQuery("id")
 	offset, _ := strconv.ParseInt(c.Query("offset"), 10, 32)

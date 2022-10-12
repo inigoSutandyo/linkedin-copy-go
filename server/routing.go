@@ -48,6 +48,8 @@ func Routes(router *gin.Engine) {
 		api.DELETE("/home/post/remove", controller.RemovePost)
 
 		api.GET("/home/post/comment", controller.GetComments)
+		api.GET("/home/post/comment/count", controller.GetCommentCount)
+
 		api.POST("/home/post/comment/add", controller.AddComment)
 
 		api.POST("/home/post/comment/reply/add", controller.AddReply)
