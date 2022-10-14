@@ -14,6 +14,8 @@ func Routes(router *gin.Engine) {
 
 	api := router.Group("/api")
 	{
+		api.GET("/user/all", controller.FindUsers)
+
 		api.GET("/auth/isauth", controller.ClientAuth)
 		api.POST("/auth/register", controller.Register)
 		api.POST("/auth/login", controller.Login)

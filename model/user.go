@@ -39,6 +39,12 @@ type User struct {
 	IsVerified         bool
 }
 
+func GetUsers() []User {
+	var users []User
+	utils.DB.Find(&users)
+	return users
+}
+
 func GetUserById(id string) User {
 	var user User
 	utils.DB.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user)

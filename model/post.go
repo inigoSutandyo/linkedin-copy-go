@@ -13,6 +13,7 @@ type Post struct {
 	Likes        int        `json:"likes"`
 	FileUrl      string     `json:"fileurl"`
 	FilePublicID string     `json:"fileid"`
+	FileType     string     `json:"filetype"`
 	UserID       uint       `json:"-"`
 	User         User       `json:"user"`
 	Comments     []Comment  `json:"-"`
