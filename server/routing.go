@@ -25,6 +25,7 @@ func Routes(router *gin.Engine) {
 		api.POST("/auth/reset", controller.ResetPassword)
 		api.POST("/auth/verify", controller.VerifyUser)
 
+		api.GET("/user/experiences", controller.FetchUserExperience)
 		api.GET("/user/profile", controller.GetUser)
 		api.GET("/user/otherprofile", controller.GetOtherUser)
 		api.POST("/user/profile/update", controller.UpdateProfile)

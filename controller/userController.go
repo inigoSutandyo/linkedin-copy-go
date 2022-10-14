@@ -368,3 +368,14 @@ func UnfollowUser(c *gin.Context) {
 		"message": "success",
 	})
 }
+
+func FetchUserExperience(c *gin.Context) {
+	id := c.Query("id")
+	user := model.GetUserById(id)
+	model.GetExperiences(&user)
+
+	c.JSON(200, gin.H{
+		"messages":    "success",
+		"experiences": user.Experiences,
+	})
+}
