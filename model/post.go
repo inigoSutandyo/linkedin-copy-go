@@ -18,9 +18,18 @@ type Post struct {
 	User         User       `json:"user"`
 	Comments     []Comment  `json:"-"`
 	PostLikes    []PostLike `json:"-"`
+	SendCount    int        `json:"sendcount"`
 }
 
 func GetPostByID(id uint) (Post, error) {
+	var post Post
+	err := utils.DB.Preload("User").First(&post, id).Error
+	getPostLikeCount(&post)
+
+	return post, err
+}
+
+func GetPostByIDString(id string) (Post, error) {
 	var post Post
 	err := utils.DB.Preload("User").First(&post, id).Error
 	getPostLikeCount(&post)

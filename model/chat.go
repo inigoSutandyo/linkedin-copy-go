@@ -12,6 +12,8 @@ type Message struct {
 	UserID  uint   `json:"-"`
 	Chat    Chat   `json:"chat"`
 	ChatID  uint   `json:"chatid"`
+	PostID  *uint  `json:"postid"`
+	Post    *Post  `json:"post"`
 }
 
 type Chat struct {
@@ -27,18 +29,18 @@ func GetRooms(id string) []Chat {
 	return chats
 }
 
-func CreateRoom(users []User) error {
+func CreateRoom(users []User) (Chat, error) {
 	var chat Chat
 
 	err := utils.DB.Create(&chat).Error
-	err = utils.DB.Model(&chat).Association("Users").Append(&users)
-	for u := range users {
-		err = utils.DB.Model(&u).Association("Chats").Append(chat)
-		if err != nil {
-			return err
-		}
-	}
-	return err
+	err = utils.DB.Model(&chat).Association("Users").Append(users)
+	// for _, user := range users {
+	// 	err = utils.DB.Model(&user).Association("Chats").Append(chat)
+	// 	if err != nil {
+	// 		return chat, err
+	// 	}
+	// }
+	return chat, err
 }
 
 func GetRoomById(id uint) Chat {
@@ -58,8 +60,44 @@ func CreateMessage(chat_id uint, user_id string, message *Message) Message {
 	return *message
 }
 
+func CreateSendPost(user_id string, dest_id string, post_id string) Message {
+	chats := GetRooms(user_id)
+	user := GetUserById(dest_id)
+	src := GetUserById(user_id)
+	var chat Chat
+	found := false
+	for _, c := range chats {
+		if len(c.Users) > 2 {
+			continue
+		}
+		for _, u := range c.Users {
+			if u.ID == user.ID {
+				chat = c
+				found = true
+				break
+			}
+		}
+	}
+
+	if found == false {
+		users := []User{src, user}
+		chat, _ = CreateRoom(users)
+	}
+
+	post, _ := GetPostByIDString(post_id)
+
+	var message Message = Message{
+		Content: "Sent Post",
+		Post:    &post,
+		PostID:  &post.ID,
+	}
+
+	utils.DB.Model(&post).Update("send_count", post.SendCount+1)
+	return CreateMessage(chat.ID, user_id, &message)
+}
+
 func GetMessage(chat *Chat) []Message {
 	var messages []Message
-	utils.DB.Preload("User").Model(chat).Association("Messages").Find(&messages)
+	utils.DB.Preload("User").Preload("Post").Model(chat).Association("Messages").Find(&messages)
 	return messages
 }

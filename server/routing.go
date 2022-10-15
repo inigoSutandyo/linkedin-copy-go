@@ -77,5 +77,8 @@ func Routes(router *gin.Engine) {
 
 		api.POST("/user/follow", controller.FollowUser)
 		api.DELETE("/user/unfollow", controller.UnfollowUser)
+
+		api.POST("/send/post", controller.SendPost)
+		api.GET("/get/post", controller.GetSinglePost)
 	}
 }

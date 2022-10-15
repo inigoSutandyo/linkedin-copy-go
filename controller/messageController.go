@@ -60,7 +60,7 @@ func CreateNewChat(c *gin.Context) {
 	users = append(users, model.GetUserById(id))
 	users = append(users, model.GetUserById(id2))
 	// fmt.Println(users)
-	err := model.CreateRoom(users)
+	_, err := model.CreateRoom(users)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -100,4 +100,13 @@ func GetMessageByChat(c *gin.Context) {
 		"message":  "success",
 		"messages": messages,
 	})
+}
+
+func SendPost(c *gin.Context) {
+	id := getUserID(c)
+	post_id := c.Query("post_id")
+	user_id := c.Query("user_id")
+
+	model.CreateSendPost(id, user_id, post_id)
+	
 }

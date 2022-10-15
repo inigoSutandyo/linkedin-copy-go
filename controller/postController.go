@@ -10,6 +10,27 @@ import (
 	// "github.com/fmpwizard/go-quilljs-delta/delta"
 )
 
+func GetSinglePost(c *gin.Context) {
+	id := c.Query("id")
+
+	if id == "" {
+		abortError(c, http.StatusBadRequest, "Post not found")
+		return
+	}
+
+	post, err := model.GetPostByIDString(id)
+
+	if err != nil {
+		abortError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"post":    post,
+		"message": "success",
+	})
+}
+
 func AddPost(c *gin.Context) {
 	id := getUserID(c)
 	var post model.Post
