@@ -98,6 +98,6 @@ func CreateSendPost(user_id string, dest_id string, post_id string) Message {
 
 func GetMessage(chat *Chat) []Message {
 	var messages []Message
-	utils.DB.Preload("User").Preload("Post").Model(chat).Association("Messages").Find(&messages)
+	utils.DB.Preload("User").Preload("Post").Model(chat).Order("chats.created_at desc").Association("Messages").Find(&messages)
 	return messages
 }

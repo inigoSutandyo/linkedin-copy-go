@@ -35,7 +35,7 @@ func AddPost(c *gin.Context) {
 	id := getUserID(c)
 	var post model.Post
 	c.BindJSON(&post)
-
+	post.SendCount = 0
 	post.Content = sanitizeHtml(post.Content)
 
 	user := model.GetUserById(id)

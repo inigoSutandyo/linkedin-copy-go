@@ -35,9 +35,7 @@ func AddComment(c *gin.Context) {
 		Message:   " commented on your post",
 		HasSource: true,
 	}
-
 	model.CreateNotificationForPost(&post.User, &user, &notification, &post)
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",
 		"comment": comment,

@@ -50,6 +50,9 @@ func GetChatRooms(c *gin.Context) {
 func CreateNewChat(c *gin.Context) {
 	var users []model.User
 	id := getUserID(c)
+	if id == "" {
+		return
+	}
 	id2 := c.Query("id")
 
 	if id == "" || id2 == "" {
@@ -57,10 +60,43 @@ func CreateNewChat(c *gin.Context) {
 		return
 	}
 
-	users = append(users, model.GetUserById(id))
+	chats := model.GetRooms(id)
+	count := 0
+
+	user := model.GetUserById(id)
+	user2 := model.GetUserById(id2)
+	var tmp model.Chat
+	for _, c := range chats {
+		if len(c.Users) > 2 {
+			continue
+		}
+		count = 0
+		for _, u := range c.Users {
+			if u.ID == user.ID || u.ID == user2.ID {
+				count = count + 1
+				break
+			}
+		}
+
+		if count >= 2 {
+			tmp = c
+			break
+		}
+	}
+
+	if count >= 2 {
+		// abortError(c, http.StatusBadRequest, "Chat is created")
+		c.JSON(200, gin.H{
+			"message": "chat already created..",
+			"tmp":     tmp,
+		})
+		return
+	}
+
+	users = append(users, user)
 	users = append(users, model.GetUserById(id2))
 	// fmt.Println(users)
-	_, err := model.CreateRoom(users)
+	chat, err := model.CreateRoom(users)
 
 	if err != nil {
 		abortError(c, http.StatusInternalServerError, err.Error())
@@ -69,6 +105,7 @@ func CreateNewChat(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "success",
+		"chat":    chat,
 	})
 }
 
@@ -108,5 +145,5 @@ func SendPost(c *gin.Context) {
 	user_id := c.Query("user_id")
 
 	model.CreateSendPost(id, user_id, post_id)
-	
+
 }
