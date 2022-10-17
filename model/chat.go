@@ -7,14 +7,15 @@ import (
 
 type Message struct {
 	gorm.Model
-	Content string `json:"content"`
-	User    User   `json:"user"`
-	UserID  uint   `json:"-"`
-	Chat    Chat   `json:"chat"`
-	ChatID  uint   `json:"chatid"`
-	PostID  *uint  `json:"postid"`
-	Post    *Post  `json:"post"`
-	FileUrl string `json:"fileurl"`
+	Content   string `json:"content"`
+	User      User   `json:"user"`
+	UserID    uint   `json:"-"`
+	Chat      Chat   `json:"chat"`
+	ChatID    uint   `json:"chatid"`
+	PostID    *uint  `json:"postid"`
+	Post      *Post  `json:"post"`
+	FileUrl   string `json:"fileurl"`
+	ProfileID uint   `json:"profileid"`
 }
 
 type Chat struct {
@@ -94,6 +95,36 @@ func CreateSendPost(user_id string, dest_id string, post_id string) Message {
 	}
 
 	utils.DB.Model(&post).Update("send_count", post.SendCount+1)
+	return CreateMessage(chat.ID, user_id, &message)
+}
+
+func CreateSendProfile(user_id string, dest_id string, profile_id uint) Message {
+	chats := GetRooms(user_id)
+	user := GetUserById(dest_id)
+	src := GetUserById(user_id)
+	var chat Chat
+	found := false
+	for _, c := range chats {
+		if len(c.Users) > 2 {
+			continue
+		}
+		for _, u := range c.Users {
+			if u.ID == user.ID {
+				chat = c
+				found = true
+				break
+			}
+		}
+	}
+
+	if found == false {
+		users := []User{src, user}
+		chat, _ = CreateRoom(users)
+	}
+	var message Message = Message{
+		Content:   "Sent Post",
+		ProfileID: profile_id,
+	}
 	return CreateMessage(chat.ID, user_id, &message)
 }
 

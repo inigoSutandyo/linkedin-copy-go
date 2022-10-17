@@ -144,7 +144,23 @@ func SendPost(c *gin.Context) {
 	post_id := c.Query("post_id")
 	user_id := c.Query("user_id")
 
-	model.CreateSendPost(id, user_id, post_id)
+	message := model.CreateSendPost(id, user_id, post_id)
+	c.JSON(200, gin.H{
+		"message": "success",
+		"data":    message,
+	})
+}
+func SendProfile(c *gin.Context) {
+	id := getUserID(c)
+	profile_id, _ := toUint(c.Query("profile_id"))
+	user_id := c.Query("user_id")
+
+	message := model.CreateSendProfile(id, user_id, profile_id)
+
+	c.JSON(200, gin.H{
+		"message": "success",
+		"data":    message,
+	})
 
 }
 
@@ -154,5 +170,5 @@ func SendImage(c *gin.Context) {
 	var message model.Message
 	c.BindJSON(&message)
 	model.CreateMessage(chat_id, id, &message)
-	
+
 }

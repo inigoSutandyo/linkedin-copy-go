@@ -79,6 +79,7 @@ func Routes(router *gin.Engine) {
 		api.DELETE("/user/unfollow", controller.UnfollowUser)
 
 		api.POST("/send/post", controller.SendPost)
+		api.POST("/send/profile", controller.SendProfile)
 		api.GET("/get/post", controller.GetSinglePost)
 
 		api.POST("/chat/image", controller.SendImage)
