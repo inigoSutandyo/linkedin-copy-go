@@ -14,6 +14,7 @@ type Message struct {
 	ChatID  uint   `json:"chatid"`
 	PostID  *uint  `json:"postid"`
 	Post    *Post  `json:"post"`
+	FileUrl string `json:"fileurl"`
 }
 
 type Chat struct {
@@ -25,7 +26,7 @@ type Chat struct {
 func GetRooms(id string) []Chat {
 	var chats []Chat
 	user := GetUserById(id)
-	utils.DB.Preload("Users").Model(&user).Association("Chats").Find(&chats)
+	utils.DB.Preload("Users").Model(&user).Order("chats.created_at desc").Association("Chats").Find(&chats)
 	return chats
 }
 
@@ -98,6 +99,6 @@ func CreateSendPost(user_id string, dest_id string, post_id string) Message {
 
 func GetMessage(chat *Chat) []Message {
 	var messages []Message
-	utils.DB.Preload("User").Preload("Post").Model(chat).Order("chats.created_at desc").Association("Messages").Find(&messages)
+	utils.DB.Preload("User").Preload("Post").Model(chat).Association("Messages").Find(&messages)
 	return messages
 }

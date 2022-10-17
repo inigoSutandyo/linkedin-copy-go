@@ -147,3 +147,12 @@ func SendPost(c *gin.Context) {
 	model.CreateSendPost(id, user_id, post_id)
 
 }
+
+func SendImage(c *gin.Context) {
+	chat_id, _ := toUint(c.Query("chat_id"))
+	id := getUserID(c)
+	var message model.Message
+	c.BindJSON(&message)
+	model.CreateMessage(chat_id, id, &message)
+	
+}

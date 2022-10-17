@@ -80,5 +80,7 @@ func Routes(router *gin.Engine) {
 
 		api.POST("/send/post", controller.SendPost)
 		api.GET("/get/post", controller.GetSinglePost)
+
+		api.POST("/chat/image", controller.SendImage)
 	}
 }
